@@ -90,8 +90,7 @@ module.exports = {
        inline: /runtime\..*\.js$/
       }])
       .end();
-     config
-      .optimization.splitChunks({
+     config.optimization.splitChunks({
       chunks: 'all',
       cacheGroups: {
        libs: {
