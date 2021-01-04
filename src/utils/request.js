@@ -26,12 +26,13 @@ class Request {
     return config;
    },
    error => {
+    console.log("use：", error);
     return Promise.reject(error);
    }
   );
   this.instance.interceptors.response.use(
    response => {
-    sessionStorage.removeItem('req_' + response.config.url);
+    sessionStorage.removeItem('req_' + response.config.baseURL + response.config.url);
     const res = response.data;
     res.msg && Message({
      message: res.msg,
@@ -48,10 +49,10 @@ class Request {
     if (error.response.status === 401) {
      router.push('/login');
     }
-    sessionStorage.removeItem('req_' + error.config.url);
-    const res = error.response.data.message;
+    sessionStorage.removeItem('req_' + error.config.baseURL + error.config.url);
+    const res = error.response.data.msg;
     Message({
-     message: res,
+     message: !res ? error.response.statusText : res,
      type: 'error',
      duration: 5 * 1000
     });

@@ -5,7 +5,7 @@ export function isExternal(path) {
 }
 
 export function validUsername(str) {
- const reg = /^[a-zA-Z][-_a-zA-Z0-9]{3,7}$/;
+ const reg = /^[a-zA-Z][-_a-zA-Z0-9]{6,20}$/;
  return reg.test(str);
 }
 

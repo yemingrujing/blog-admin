@@ -39,7 +39,7 @@ const actions = {
  setName({ commit }, data) {
   commit('SET_NAME', data);
  },
- // user login
+
  login({ commit }, userInfo) {
   const { username, password, captcha } = userInfo;
   return new Promise((resolve, reject) => {
@@ -57,7 +57,6 @@ const actions = {
   });
  },
 
- // get user info
  getInfo({ commit, state }) {
   return new Promise((resolve, reject) => {
    const response = userInfo();

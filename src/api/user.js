@@ -1,7 +1,11 @@
 import Request from '@/utils/request';
 
+export function getCaptcha(data) {
+ return Request.get('/api/user/captcha', data);
+}
+
 export function login(data) {
- return Request.post('/user/login', data);
+ return Request.post('/api/user/login', data);
 }
 
 export function changeThemeReq(data) {
@@ -9,9 +13,9 @@ export function changeThemeReq(data) {
 }
 
 export function getInfo() {
- return Request.post('/user/info');
+ return Request.post('/api/user/userInfo');
 }
 
 export function logout() {
- return Request.post('user/logout');
+ return Request.post('/api/user/logout');
 }

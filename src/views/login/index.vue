@@ -1,401 +1,335 @@
 <template>
-  <div class="login-container">
-    <el-form
-      ref="loginForm"
-      :model="form"
-      :rules="rules"
-      class="login-form"
-      autocomplete="on"
-      label-position="left"
-    >
-      <div class="title-container">
-        <h3 class="title">{{ title }}</h3>
-      </div>
+  <div id="userLayout" class="user-layout-wrapper">
+    <div class="container">
+      <el-card class="animated flipInY">
+        <div class="top">
+          <div class="desc">
+            <img class="logo_login" src="@/assets/logo_login.png" alt=""/>
+          </div>
+          <div class="header">
+            <a href="/">
+              <span class="title">{{ title }}</span>
+            </a>
+          </div>
+        </div>
+        <div class="main">
+          <el-form
+              :model="form"
+              :rules="rules"
+              ref="loginForm"
+              @keyup.enter.native="submitForm"
+          >
+            <el-form-item prop="username">
+              <el-input placeholder="请输入用户名" v-model="form.username">
+                <i class="el-input__icon el-icon-user" slot="suffix"></i
+                ></el-input>
+            </el-form-item>
+            <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+              <el-form-item prop="password">
+                <el-input
+                    :type="lock === 'lock' ? 'password' : 'text'"
+                    placeholder="请输入密码"
+                    v-model="form.password"
+                    @keyup.native="checkCapslock"
+                    @blur="capsTooltip = false"
+                    @keyup.enter.native="login"
+                >
+                  <i :class="'el-input__icon el-icon-' + lock" @click="showPwd" slot="suffix"></i>
+                </el-input>
+              </el-form-item>
+            </el-tooltip>
+            <el-form-item style="position: relative">
+              <el-input
+                  v-model="form.captcha"
+                  name="logVerify"
+                  placeholder="请输入验证码"
+                  style="width: 60%"
+              />
+              <div class="vPic">
+                <span width="100%" height="100%" @click="chgUrl" v-html="captcha"/>
+              </div>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click.native.prevent="login" style="width: 100%"
+              >登 录
+              </el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-card>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="form.username"
-          placeholder="请输入用户名"
-          name="username"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="form.password"
-            :type="passwordType"
-            placeholder="请输入密码"
-            name="password"
-            tabindex="1"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="login"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
-      </el-tooltip>
-      <el-form-item prop="captcha">
-        <span class="svg-container">
-          <svg-icon icon-class="bug" />
-        </span>
-        <el-input
-          v-model="form.captcha"
-          placeholder="请输入验证码"
-          name="captcha"
-          type="text"
-          tabindex="1"
-        />
-        <span class="captcha" @click="chgUrl" v-html="captcha" />
-      </el-form-item>
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width:100%;margin-bottom:30px;"
-        @click.native.prevent="login"
-      >
-        Login
-      </el-button>
-    </el-form>
+      <div class="footer">
+        <div class="links">
+          <a href="https://juejin.cn/user/606586149536430"
+          ><img src="@/assets/juejin.svg" class="link-icon"
+          /></a>
+          <a href="https://www.yuque.com/flipped-aurora/"
+          ><img src="@/assets/yuque.png" class="link-icon"
+          /></a>
+          <a href="https://github.com/yemingrujing/blog-admin"
+          ><img src="@/assets/github.png" class="link-icon"
+          /></a>
+          <a href="https://space.bilibili.com/348385668"
+          ><img src="@/assets/video.png" class="link-icon"
+          /></a>
+        </div>
+        <div class="copyright">Copyright &copy; {{ curYear }} 💖flipped-aurora</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-	import { validUsername } from '@/utils/validate';
-	import Request from '@/utils/request';
-	import defaultSetting from '@/settings';
+import { validUsername } from '@/utils/validate';
+import { getCaptcha } from '@/api/user';
+import defaultSetting from '@/settings';
 
-	export default {
-		name: 'Login',
-		data() {
-			const validateUsername = (rule, value, callback) => {
-				if (!validUsername(value)) {
-					callback(new Error('用户名格式错误'));
-				} else {
-					callback();
-				}
-			};
-			const validatePassword = (rule, value, callback) => {
-				if (value.length < 6) {
-					callback(new Error('密码格式错误'));
-				} else {
-					callback();
-				}
-			};
-			const validateCaptcha = (rule, value, callback) => {
-				if (value.length !== 4) {
-					callback(new Error('请输入4位验证码'));
-				} else {
-					callback();
-				}
-			};
+export default {
+  name: 'Login',
+  data() {
+    const validateUsername = (rule, value, callback) => {
+      if (!validUsername(value)) {
+        callback(new Error('用户名格式错误'));
+      } else {
+        callback();
+      }
+    };
+    const validatePassword = (rule, value, callback) => {
+      if (value.length < 6) {
+        callback(new Error('密码格式错误'));
+      } else {
+        callback();
+      }
+    };
+    const validateCaptcha = (rule, value, callback) => {
+      if (value.length !== 4) {
+        callback(new Error('请输入4位验证码'));
+      } else {
+        callback();
+      }
+    };
 
-			return {
-				captcha: '',
-				form: {
-					username: '',
-					password: '',
-					captcha: ''
-				},
-				rules: {
-					username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-					password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-					captcha: [{ required: true, trigger: 'blur', validator: validateCaptcha }]
-				},
-				passwordType: 'password',
-				capsTooltip: false,
-				loading: false,
-				otherQuery: {},
-				title: defaultSetting.title
-			};
-		},
-		created() {
-			this.$store.dispatch('user/clearUser');
-			this.chgUrl();
-		},
-		mounted() {
-			if (this.form.username === '') {
-				this.$refs.username.focus();
-			} else if (this.form.password === '') {
-				this.$refs.password.focus();
-			}
-		},
-		methods: {
-			chgUrl() {
-				Request.get('/user/captcha').then(res => {
-					this.captcha = res;
-				});
-			},
-			checkCapslock(e) {
-				const { key } = e;
-				this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z');
-			},
-			showPwd() {
-				if (this.passwordType === 'password') {
-					this.passwordType = '';
-				} else {
-					this.passwordType = 'password';
-				}
-				this.$nextTick(() => {
-					this.$refs.password.focus();
-				});
-			},
-			login() {
-				this.$refs.form.validate(valid => {
-					if (valid) {
-						this.loading = true;
-						this.$store.dispatch('user/login', this.form)
-							.then(() => {
-								this.$router.push('/');
-								this.loading = false;
-							})
-							.catch(() => {
-								this.loading = false;
-							});
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
-			}
-		}
-	};
+    return {
+      curYear: 0,
+      captcha: '',
+      lock: "lock",
+      form: {
+        username: '',
+        password: '',
+        captcha: ''
+      },
+      rules: {
+        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        captcha: [{ required: true, trigger: 'blur', validator: validateCaptcha }]
+      },
+      capsTooltip: false,
+      loading: false,
+      title: defaultSetting.title
+    };
+  },
+  created() {
+    this.$store.dispatch('user/clearUser');
+    this.chgUrl();
+    this.curYear = new Date().getFullYear();
+  },
+  mounted() {
+    if (this.form.username === '') {
+      this.$refs.username.focus();
+    } else if (this.form.password === '') {
+      this.$refs.password.focus();
+    }
+  },
+  methods: {
+    chgUrl() {
+      getCaptcha().then(res => {
+        this.captcha = res;
+      });
+    },
+    checkCapslock(e) {
+      const { key } = e;
+      this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z');
+    },
+    showPwd() {
+      this.lock === "lock" ? (this.lock = "unlock") : (this.lock = "lock");
+    },
+    login() {
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true;
+          this.$store.dispatch('user/login', this.form)
+              .then(() => {
+                this.$router.push('/');
+                this.loading = false;
+              })
+              .catch(() => {
+                this.loading = false;
+              });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    }
+  }
+};
 </script>
 
-<style lang="scss">
-    .captcha {
-        cursor: pointer;
-        position: absolute;
-        right: 0;
-    }
-
-    $bg: #283443;
-    $light_gray: #fff;
-    $cursor: #fff;
-
-    @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-        .login-container .el-input input {
-            color: #000;
-        }
-    }
-
-    /* reset element-ui css */
-    .login-container {
-        .el-input {
-            display: inline-block;
-            height: 47px;
-            width: 85%;
-
-            input {
-                background: transparent;
-                border: 0;
-                -webkit-appearance: none;
-                border-radius: 0;
-                padding: 12px 5px 12px 15px;
-                color: #000;
-                height: 47px;
-                caret-color: #000;
-
-                &:-webkit-autofill {
-                    box-shadow: 0 0 0 1000px $bg inset !important;
-                    -webkit-text-fill-color: $cursor !important;
-                }
-            }
-        }
-
-        .el-form-item {
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            color: #454545;
-        }
-    }
-</style>
-
 <style lang="scss" scoped>
-    $bg: #fff;
-    $dark_gray: #000;
-    $light_gray: #eee;
+.login-register-box {
+  height: 100vh;
 
-    .login-container {
-        min-height: 100%;
-        width: 100%;
-        background-color: $bg;
-        overflow: hidden;
+  .login-box {
+    width: 40vw;
+    position: absolute;
+    left: 50%;
+    margin-left: -22vw;
+    top: 5vh;
 
-        .login-form {
-            position: relative;
-            width: 520px;
-            max-width: 100%;
-            padding: 160px 35px 0;
-            margin: 0 auto;
-            overflow: hidden;
-        }
+    .logo {
+      height: 35vh;
+      width: 35vh;
+    }
+  }
+}
 
-        .tips {
-            font-size: 14px;
-            color: $bg;
-            margin-bottom: 10px;
+.link-icon {
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+}
 
-            span {
-                &:first-of-type {
-                    margin-right: 16px;
-                }
-            }
-        }
+.vPic {
+  width: 33%;
+  height: 38px;
+  float: right !important;
+  background: #ccc;
 
-        .svg-container {
-            padding: 6px 5px 6px 15px;
-            color: $dark_gray;
-            vertical-align: middle;
-            width: 30px;
-            display: inline-block;
-        }
+  img {
+    cursor: pointer;
+    vertical-align: middle;
+  }
+}
 
-        .title-container {
-            position: relative;
+.logo_login {
+  width: 100px;
+}
 
-            .title {
-                font-size: 26px;
-                color: #000;
-                margin: 0px auto 40px auto;
-                text-align: center;
-                font-weight: bold;
-            }
-        }
+#userLayout.user-layout-wrapper {
+  height: 100%;
+  position: relative;
 
-        .show-pwd {
+  &.mobile {
+    .container {
+      .main {
+        max-width: 368px;
+        width: 98%;
+      }
+    }
+  }
+
+  .container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    min-height: 100%;
+    background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
+    background-size: 100%;
+    padding: 110px 0 144px;
+
+    a {
+      text-decoration: none;
+    }
+
+    .el-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -450px 0 0 -250px;
+      width: 500px;
+      height: 450px;
+      background: #fff;
+
+      .top {
+        text-align: center;
+        margin-top: -10px;
+
+        .header {
+          height: 44px;
+          line-height: 32px;
+          margin-bottom: 30px;
+
+          .badge {
             position: absolute;
-            right: 10px;
-            top: 7px;
-            font-size: 16px;
-            color: $dark_gray;
-            cursor: pointer;
-            user-select: none;
-        }
-    }
-</style>
-<style lang="scss">
-    .captcha {
-        cursor: pointer;
-        position: absolute;
-        right: 0;
-    }
-
-    $bg: #283443;
-    $light_gray: #fff;
-    $cursor: #fff;
-
-    @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-        .login-container .el-input input {
-            color: #000;
-        }
-    }
-
-    .login-container {
-        .el-input {
             display: inline-block;
-            height: 47px;
-            width: 85%;
-
-            input {
-                background: transparent;
-                border: 0;
-                -webkit-appearance: none;
-                border-radius: 0;
-                padding: 12px 5px 12px 15px;
-                color: #000;
-                height: 47px;
-                caret-color: #000;
-
-                &:-webkit-autofill {
-                    box-shadow: 0 0 0 1000px $bg inset !important;
-                    -webkit-text-fill-color: $cursor !important;
-                }
-            }
-        }
-
-        .el-form-item {
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            color: #454545;
-        }
-    }
-</style>
-
-<style lang="scss" scoped>
-    $bg: #fff;
-    $dark_gray: #000;
-    $light_gray: #eee;
-
-    .login-container {
-        min-height: 100%;
-        width: 100%;
-        background-color: $bg;
-        overflow: hidden;
-
-        .login-form {
-            position: relative;
-            width: 520px;
-            max-width: 100%;
-            padding: 160px 35px 0;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .tips {
-            font-size: 14px;
-            color: $bg;
-            margin-bottom: 10px;
-
-            span {
-                &:first-of-type {
-                    margin-right: 16px;
-                }
-            }
-        }
-
-        .svg-container {
-            padding: 6px 5px 6px 15px;
-            color: $dark_gray;
+            line-height: 1;
             vertical-align: middle;
-            width: 30px;
-            display: inline-block;
-        }
+            margin-left: -12px;
+            margin-top: -10px;
+            opacity: 0.8;
+          }
 
-        .title-container {
+          .logo {
+            height: 44px;
+            vertical-align: top;
+            margin-right: 16px;
+            border-style: none;
+          }
+
+          .title {
+            font-size: 33px;
+            color: rgba(0, 0, 0, 0.85);
+            font-family: Avenir, "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-weight: 600;
             position: relative;
-
-            .title {
-                font-size: 26px;
-                color: #000;
-                margin: 0px auto 40px auto;
-                text-align: center;
-                font-weight: bold;
-            }
+            top: 2px;
+          }
         }
 
-        .show-pwd {
-            position: absolute;
-            right: 10px;
-            top: 7px;
-            font-size: 16px;
-            color: $dark_gray;
-            cursor: pointer;
-            user-select: none;
+        .desc {
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.45);
+          margin-top: 12px;
         }
+      }
     }
+
+    .main {
+      min-width: 260px;
+      width: 368px;
+      margin: 0 auto;
+    }
+
+    .footer {
+      position: relative;
+      width: 100%;
+      padding: 0 20px;
+      margin: 550px 0 10px;
+      text-align: center;
+
+      .links {
+        margin-bottom: 8px;
+        font-size: 14px;
+        width: 330px;
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-right: 40px;
+
+        a {
+          color: rgba(0, 0, 0, 0.45);
+          transition: all 0.3s;
+        }
+      }
+
+      .copyright {
+        color: rgba(0, 0, 0, 0.45);
+        font-size: 14px;
+        padding-right: 40px;
+      }
+    }
+  }
+}
 </style>
