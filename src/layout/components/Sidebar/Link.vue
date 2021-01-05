@@ -23,17 +23,20 @@ export default {
         return 'a';
       }
       return 'router-link';
-    },
-    methods: {
-      linkProps(to) {
-        if (this.isExternal) {
-          return {
-            href: to,
-            target: '_blank',
-            rel: 'noopener'
-          };
-        }
+    }
+  },
+  methods: {
+    linkProps(to) {
+      if (this.isExternal) {
+        return {
+          href: to,
+          target: '_blank',
+          rel: 'noopener'
+        };
       }
+      return {
+        to: to
+      };
     }
   }
 };

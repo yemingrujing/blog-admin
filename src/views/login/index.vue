@@ -20,12 +20,13 @@
             @keyup.enter.native="submitForm"
           >
             <el-form-item prop="username">
-              <el-input v-model="form.username" placeholder="请输入用户名">
+              <el-input ref="username" v-model="form.username" placeholder="请输入用户名">
                 <i slot="suffix" class="el-input__icon el-icon-user" /></el-input>
             </el-form-item>
             <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
               <el-form-item prop="password">
                 <el-input
+                  ref="password"
                   v-model="form.password"
                   :type="lock === 'lock' ? 'password' : 'text'"
                   placeholder="请输入密码"
@@ -262,7 +263,7 @@ export default {
       left: 50%;
       margin: -270px 0 0 -250px;
       width: 500px;
-      height: 450px;
+      height: 420px;
       background: #fff;
 
       .top {
@@ -270,7 +271,7 @@ export default {
         margin-top: -10px;
 
         .header {
-          height: 44px;
+          height: 28px;
           line-height: 32px;
           margin-bottom: 30px;
 
@@ -292,7 +293,7 @@ export default {
           }
 
           .title {
-            font-size: 33px;
+            font-size: 28px;
             color: rgba(0, 0, 0, 0.85);
             font-family: Avenir, "Helvetica Neue", Arial, Helvetica, sans-serif;
             font-weight: 600;
@@ -319,7 +320,7 @@ export default {
       position: relative;
       width: 100%;
       padding: 0 20px;
-      margin: 550px 0 10px;
+      margin: 540px 0 10px;
       text-align: center;
 
       .links {

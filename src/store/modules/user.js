@@ -44,8 +44,8 @@ const actions = {
     const { username, password, captcha } = userInfo;
     return new Promise((resolve, reject) => {
       login({ username, password: md5(password), captcha }).then(response => {
-        const { avatar, id, account, theme } = response;
-        setToken(account);
+        const { avatar, id, account, theme, token } = response;
+        setToken(token);
         commit('SET_ID', id);
         commit('SET_NAME', account);
         commit('SET_AVATAR', avatar);

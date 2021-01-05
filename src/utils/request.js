@@ -4,6 +4,7 @@ import axios from "axios";
 import router from "@/router";
 import defaultSetting from "@/settings";
 import { Message } from "element-ui";
+import { getToken } from '@/utils/auth';
 
 class Request {
   constructor(props) {
@@ -13,6 +14,11 @@ class Request {
     });
     this.instance.interceptors.request.use(
       config => {
+        const token = getToken();
+        if (token) {
+          // 设置令牌请求头
+          config.headers["Authorization"] = 'Bearer ' + token;
+        }
         if (sessionStorage.getItem('req_' + config.baseURL + config.url)) {
           const msg = '请求已发出，请勿重复点击';
           Message({
