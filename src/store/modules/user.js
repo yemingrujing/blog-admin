@@ -60,10 +60,12 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       const response = userInfo();
+      console.log("response：", response);
       if (response) {
         dispathUserInfo(response.roles, commit, reject, resolve);
       } else {
         getInfo(state.token).then(res => {
+          console.log("res：", res);
           if (res.length > 0) {
             const children = [];
             const list = [];

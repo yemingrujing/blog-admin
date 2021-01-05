@@ -29,7 +29,6 @@ router.beforeEach(async(to, from, next) => {
           router.addRoutes(accessRoutes);
           next({ ...to, replace: true });
         } catch (error) {
-          console.log(error);
           Message.error(error || 'Has Error');
           next(`/login?redirect=${to.path}`);
           NProgress.done();

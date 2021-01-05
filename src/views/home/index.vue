@@ -156,12 +156,13 @@ body {
 }
 
 section {
+  background-color: #ffffff;
   display: grid;
   grid-template-columns: repeat(10, auto);
 }
 
 .item {
-  background-color: #2b2f3a;
+  background-color: #ffffff;
   height: 90vh;
   z-index: 0;
 }

@@ -22,9 +22,7 @@ const actions = {
         }
         routes.push({ ...route });
       });
-      console.log("routes：", routes);
       const accessedRoutes = filterAsyncRoutes(routes, menus);
-      console.log("accessedRoutes：", accessedRoutes);
       // const arr = accessedRoutes.filter(i => !i.children || i.children.length > 0)
       commit('SET_ROUTES', accessedRoutes);
       resolve(accessedRoutes);
