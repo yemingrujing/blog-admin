@@ -4,7 +4,7 @@
       <el-card class="animated flipInY">
         <div class="top">
           <div class="desc">
-            <img class="logo_login" src="@/assets/logo_login.png" alt=""/>
+            <img class="logo_login" src="@/assets/logo_login.png" alt="">
           </div>
           <div class="header">
             <a href="/">
@@ -14,46 +14,47 @@
         </div>
         <div class="main">
           <el-form
-              :model="form"
-              :rules="rules"
-              ref="loginForm"
-              @keyup.enter.native="submitForm"
+            ref="loginForm"
+            :model="form"
+            :rules="rules"
+            @keyup.enter.native="submitForm"
           >
             <el-form-item prop="username">
-              <el-input placeholder="请输入用户名" v-model="form.username">
-                <i class="el-input__icon el-icon-user" slot="suffix"></i
-                ></el-input>
+              <el-input v-model="form.username" placeholder="请输入用户名">
+                <i slot="suffix" class="el-input__icon el-icon-user" /></el-input>
             </el-form-item>
             <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
               <el-form-item prop="password">
                 <el-input
-                    :type="lock === 'lock' ? 'password' : 'text'"
-                    placeholder="请输入密码"
-                    v-model="form.password"
-                    @keyup.native="checkCapslock"
-                    @blur="capsTooltip = false"
-                    @keyup.enter.native="login"
+                  v-model="form.password"
+                  :type="lock === 'lock' ? 'password' : 'text'"
+                  placeholder="请输入密码"
+                  @keyup.native="checkCapslock"
+                  @blur="capsTooltip = false"
+                  @keyup.enter.native="login"
                 >
-                  <i :class="'el-input__icon el-icon-' + lock" @click="showPwd" slot="suffix"></i>
+                  <i slot="suffix" :class="'el-input__icon el-icon-' + lock" @click="showPwd" />
                 </el-input>
               </el-form-item>
             </el-tooltip>
             <el-form-item style="position: relative">
               <el-input
-                  v-model="form.captcha"
-                  name="logVerify"
-                  placeholder="请输入验证码"
-                  style="width: 60%"
+                v-model="form.captcha"
+                name="logVerify"
+                placeholder="请输入验证码"
+                style="width: 60%"
               />
               <div class="vPic">
-                <span width="100%" height="100%" @click="chgUrl" v-html="captcha"/>
+                <span width="100%" height="100%" @click="chgUrl" v-html="captcha" />
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click.native.prevent="login" style="width: 100%"
+              <el-button
+                type="primary"
+                style="width: 100%"
+                @click.native.prevent="login"
               >登 录
-              </el-button
-              >
+              </el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -61,18 +62,30 @@
 
       <div class="footer">
         <div class="links">
-          <a href="https://juejin.cn/user/606586149536430"
-          ><img src="@/assets/juejin.svg" class="link-icon"
-          /></a>
-          <a href="https://www.yuque.com/flipped-aurora/"
-          ><img src="@/assets/yuque.png" class="link-icon"
-          /></a>
-          <a href="https://github.com/yemingrujing/blog-admin"
-          ><img src="@/assets/github.png" class="link-icon"
-          /></a>
-          <a href="https://space.bilibili.com/348385668"
-          ><img src="@/assets/video.png" class="link-icon"
-          /></a>
+          <a
+            href="https://juejin.cn/user/606586149536430"
+          ><img
+            src="@/assets/juejin.svg"
+            class="link-icon"
+          ></a>
+          <a
+            href="https://www.yuque.com/flipped-aurora/"
+          ><img
+            src="@/assets/yuque.png"
+            class="link-icon"
+          ></a>
+          <a
+            href="https://github.com/yemingrujing/blog-admin"
+          ><img
+            src="@/assets/github.png"
+            class="link-icon"
+          ></a>
+          <a
+            href="https://space.bilibili.com/348385668"
+          ><img
+            src="@/assets/video.png"
+            class="link-icon"
+          ></a>
         </div>
         <div class="copyright">Copyright &copy; {{ curYear }} 💖flipped-aurora</div>
       </div>
@@ -247,7 +260,7 @@ export default {
       position: absolute;
       top: 50%;
       left: 50%;
-      margin: -450px 0 0 -250px;
+      margin: -270px 0 0 -250px;
       width: 500px;
       height: 450px;
       background: #fff;

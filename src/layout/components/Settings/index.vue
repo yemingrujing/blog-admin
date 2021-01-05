@@ -4,29 +4,29 @@
       <h3 class="drawer-title">页面风格</h3>
       <div class="drawer-item">
         <span>主题颜色</span>
-        <theme-picker style="float: right;height: 26px;margin: -3px 8px 0 0;"/>
+        <theme-picker style="float: right;height: 26px;margin: -3px 8px 0 0;" />
       </div>
 
       <div class="drawer-item">
         <span>标签功能</span>
-        <el-switch v-model="tagsView" class="drawer-switch"/>
+        <el-switch v-model="tagsView" class="drawer-switch" />
       </div>
 
       <div class="drawer-item">
         <span>固定页头</span>
-        <el-switch v-model="fixedHeader" class="drawer-switch"/>
+        <el-switch v-model="fixedHeader" class="drawer-switch" />
       </div>
 
       <div class="drawer-item">
         <span>侧边栏LOGO</span>
-        <el-switch v-model="sidebarLogo" class="drawer-switch"/>
+        <el-switch v-model="sidebarLogo" class="drawer-switch" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
- import ThemePicker from '@/components/ThemePicker/index';
+ import ThemePicker from '@/components/ThemePicker';
 
  export default {
   components: { ThemePicker },
