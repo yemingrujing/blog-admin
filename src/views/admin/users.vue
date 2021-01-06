@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 表格查询条件 -->
     <div class="filter-container">
-      <el-input v-model.trim.trim="listQuery.account" placeholder="账号..." style="width: 200px;" clearable />
+      <el-input v-model.trim.trim="listQuery.userName" placeholder="账号..." style="width: 200px;" clearable />
       <el-button type="primary" class="filter-item" @click="search()">查询</el-button>
       <el-button type="primary" class="filter-item" @click="handleAdd()">添加</el-button>
     </div>
@@ -18,27 +18,27 @@
     <!-- 新增/编辑-->
     <el-dialog :title="title" :visible.sync="dialogVisible" width="600px">
       <el-form ref="form" :model="form" label-width="100px" size="mini" :rules="rules">
-        <el-form-item v-if="title==='添加'" label="账号" prop="account">
-          <el-input v-model.trim="form.account" placeholder="长度4至8位，以字母开头，字母，数字，减号，下划线" />
+        <el-form-item v-if="title==='添加'" label="账号" prop="userName">
+          <el-input v-model.trim="form.userName" placeholder="长度4至20位，以字母开头，字母，数字，减号，下划线" />
         </el-form-item>
-        <el-form-item label="密码" prop="user_pwd">
-          <el-input v-model.trim="form.user_pwd" show-password placeholder="长度6至12位" />
+        <el-form-item label="密码" prop="password">
+          <el-input v-model.trim="form.password" show-password placeholder="长度6至12位" />
         </el-form-item>
-        <el-form-item label="昵称" prop="nick_name">
-          <el-input v-model.trim="form.nick_name" />
+        <el-form-item label="昵称" prop="nickName">
+          <el-input v-model.trim="form.nickName" />
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
-          <ImgUpLoad :img="form.avatar" :title="form.account" @setImg="setIcon" />
+          <ImgUpLoad :img="form.avatar" :title="form.userName" @setImg="setIcon" />
         </el-form-item>
-        <el-form-item label="角色" prop="role_id">
-          <el-select ref="role" v-model="form.role_id" placeholder="选择用户角色" clearable class="filter-item">
+        <el-form-item label="角色" prop="roleId">
+          <el-select ref="role" v-model="form.roleId" placeholder="选择用户角色" clearable class="filter-item">
             <el-option v-for="(v, k,i) in roles" :key="i" :label="v" :value="k" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
-            <el-radio :label="1">启用</el-radio>
-            <el-radio :label="0">禁用</el-radio>
+            <el-radio :label="0">启用</el-radio>
+            <el-radio :label="1">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -65,23 +65,23 @@ export default {
   data() {
     return {
       rules: {
-        account: [{ required: true, trigger: 'blur' }],
+        userName: [{ required: true, trigger: 'blur' }],
         role: [{ required: true, message: '请选择角色', trigger: 'change' }]
       },
-      form: { account: '', nick_name: '', role_id: '', remark: '', status: 1, user_pwd: '', avatar: '' },
+      form: { userName: '', nickName: '', roleId: '', remark: '', status: 0, password: '', avatar: '' },
       roles: {},
       dialogVisible: false,
       reqLoading: false,
       list: [],
-      listQuery: { page: 1, account: '' },
+      listQuery: { page: 1, userName: '' },
       loading: false,
       tableHeader: [
-        { field: 'account', sortable: 'custom', title: '账号' },
-        { field: 'nick_name', sortable: 'custom', title: '昵称' },
+        { field: 'userName', sortable: 'custom', title: '账号' },
+        { field: 'nickName', sortable: 'custom', title: '昵称' },
         { field: 'avatar', title: '头像', width: '200px', img: 'avatar' },
-        { field: 'status', title: '账号启禁', switch: 'handleStatus', inactive: 0, active: 1 },
-        { field: 'role_id', title: '角色', formatter: 'role_id' },
-        { field: 'update_time', title: '更新时间' },
+        { field: 'status', title: '账号启禁', switch: 'handleStatus', inactive: 1, active: 0 },
+        { field: 'roleId', title: '角色', formatter: 'roleId' },
+        { field: 'updateTime', title: '更新时间' },
         { field: 'remark', title: '备注' },
         { field: 'toolbar', title: '操作', width: '200px' }
       ],
@@ -98,7 +98,7 @@ export default {
   created() { // 组件创建的时候
     getRoles().then(res => {
       res.map(item => {
-        this.roles[item.id] = item.role_name;
+        this.roles[item.id] = item.roleName;
       });
     });
     this.search(); // 调用查询列表的函数
@@ -163,13 +163,13 @@ export default {
       });
     },
     handleEdit(data) {
-      this.title = '编辑 -  ' + data.account;
+      this.title = '编辑 -  ' + data.userName;
       this.dialogVisible = true;
       this.form.id = data.id;
       for (const i in this.form) {
         this.form[i] = data[i];
       }
-      this.form.role_id = String(data.role_id);
+      this.form.roleId = String(data.roleId);
     },
     handleAdd() {
       this.form = { ...{}, ...this.$options.data().form };

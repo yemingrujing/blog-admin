@@ -60,12 +60,10 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       const response = userInfo();
-      console.log("response：", response);
       if (response) {
         dispathUserInfo(response.roles, commit, reject, resolve);
       } else {
-        getInfo(state.token).then(res => {
-          console.log("res：", res);
+        getInfo().then(res => {
           if (res.length > 0) {
             const children = [];
             const list = [];
@@ -127,11 +125,6 @@ const actions = {
   // dynamically modify permissions
   changeRoles({ commit, dispatch }, role) {
     return new Promise(async resolve => {
-      const token = role + '-token';
-
-      commit('SET_TOKEN', token);
-      setToken(token);
-
       const { roles } = await dispatch('getInfo');
 
       resetRouter();

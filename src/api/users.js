@@ -1,11 +1,11 @@
 import Request from '@/utils/request';
 
 export function list(data) {
-  return Request.post('/users/search', data);
+  return Request.post('/api/users/search', data);
 }
 
 export function signup(data) {
-  return Request.post('/users/add', data);
+  return Request.post('/api/users/add', data);
 }
 
 export function edit(data) {
@@ -17,5 +17,5 @@ export function del(data) {
 }
 
 export function getRoles(data) {
-  return Request.post('/users/roles', data);
+  return Request.post('/api/users/roles', data);
 }

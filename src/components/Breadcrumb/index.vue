@@ -58,8 +58,10 @@ export default {
       return toPath(params);
     },
     handleLink(item) {
+      console.log("item：", item);
       const { redirect, path } = item;
       if (redirect) {
+        console.log("redirect：", redirect);
         this.$router.push(redirect);
         return;
       }

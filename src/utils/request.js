@@ -40,10 +40,10 @@ class Request {
       response => {
         sessionStorage.removeItem('req_' + response.config.baseURL + response.config.url);
         const res = response.data;
-        res.msg && Message({
-          message: res.msg,
+        res.errMsg && Message({
+          message: res.errMsg,
           type: res.code ? 'success' : 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         });
         if (res.code) {
           return res;
@@ -56,11 +56,11 @@ class Request {
           router.push('/login');
         }
         sessionStorage.removeItem('req_' + error.config.baseURL + error.config.url);
-        const res = error.response.data.msg;
+        const res = error.response.data.errMsg;
         Message({
           message: !res ? error.response.statusText : res,
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         });
         return Promise.reject(res);
       }
