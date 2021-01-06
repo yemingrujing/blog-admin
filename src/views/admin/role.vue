@@ -27,13 +27,13 @@
     <!-- 新增 -->
     <el-dialog :visible.sync="dialogVisible" :title="title">
       <el-form ref="role" :model="role" label-width="80px" label-position="left" :rules="rules">
-        <el-form-item label="角色名称" prop="role_name">
-          <el-input v-model.trim="role.role_name" placeholder="请输入角色名称" clearable />
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model.trim="role.roleName" placeholder="请输入角色名称" clearable />
         </el-form-item>
         <el-form-item label="状态">
-          <el-radio-group v-model="role.status">
-            <el-radio :label="1">启用</el-radio>
-            <el-radio :label="0">禁用</el-radio>
+          <el-radio-group v-model="role.delFlag">
+            <el-radio :label="0">启用</el-radio>
+            <el-radio :label="1">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item v-show="!treeLoading" label="授权">
@@ -74,16 +74,16 @@ export default {
   data() {
     return {
       change: false,
-      rules: { role_name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }] },
-      role: { role_name: '', status: 1, role_keys: '' },
+      rules: { roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }] },
+      role: { roleName: '', delFlag: 0, roleKey: '' },
       dialogVisible: false,
       title: '添加角色',
       treeLoading: false,
       listLoading: false,
       list: [],
-      role_keys: [],
+      roleKey: [],
       total: 0,
-      listQuery: { page: 1, role_name: '' },
+      listQuery: { page: 1, roleName: '' },
       editData: '',
       tree: [],
       menus: [],
@@ -93,9 +93,9 @@ export default {
         label: 'name'
       },
       tableHeader: [
-        { field: 'role_name', title: '角色名称', fixed: 'left' },
-        { field: 'status', title: '角色状态', switch: 'handleStatus', inactive: 0, active: 1, width: '80px' },
-        { field: 'update_time', title: '更新时间' },
+        { field: 'roleName', title: '角色名称', fixed: 'left' },
+        { field: 'delFlag', title: '角色状态', switch: 'handleStatus', inactive: 1, active: 0, width: '80px' },
+        { field: 'createTime', title: '创建时间' },
         { field: 'toolbar', fixed: 'right', title: '操作' }
       ],
       toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
@@ -138,7 +138,7 @@ export default {
     },
     handleStatus(data) {
       this.listLoading = true;
-      edit({ id: data.id, status: data.status }).then(() => {
+      edit({ id: data.id, delFlag: data.delFlag }).then(() => {
         this.listLoading = false;
       }).catch(() => {
         this.search();
@@ -176,8 +176,8 @@ export default {
         this.$refs.tree.setCheckedKeys([]);
         this.treeLoading = false;
         item && this.$nextTick(() => {
-          const role_keys = item.role_keys.split(','); // 已被选中节点
-          const checked = role_keys.filter(v => fathers.indexOf(v) === -1);
+          const roleKey = item.roleKey.split(','); // 已被选中节点
+          const checked = roleKey.filter(v => fathers.indexOf(v) === -1);
           this.$refs.tree.setCheckedKeys(checked);
         });
       }).catch(() => {
@@ -185,13 +185,13 @@ export default {
       });
     },
     confirmRole() {
-      this.role_keys = [...this.$refs.tree.getCheckedKeys(), ...this.$refs.tree.getHalfCheckedKeys()];
-      if (!this.role_keys.length) {
+      this.roleKey = [...this.$refs.tree.getCheckedKeys(), ...this.$refs.tree.getHalfCheckedKeys()];
+      if (!this.roleKey.length) {
         this.$message.error('请选择授权项');
         return;
       }
       this.$refs['role'].validate((valid) => {
-        this.role.role_keys = this.role_keys.join(',');
+        this.role.roleKey = this.roleKey.join(',');
         if (valid) {
           this.title === '添加角色' ? this.addReq() : this.editReq();
         }
@@ -215,7 +215,7 @@ export default {
     },
     handleEdit(item) {
       this.role.id = item.id;
-      this.role.role_name = item.role_name;
+      this.role.roleName = item.roleName;
       this.getTree(item);
       this.title = '编辑角色';
       this.dialogVisible = true;

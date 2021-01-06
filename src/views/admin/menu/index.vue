@@ -17,43 +17,48 @@
     >
       <el-table-column
         class-name="table-align-left"
-        prop="menu_name"
+        prop="menuName"
         label="名称"
         width="250"
       />
       <el-table-column
-        prop="menu_type"
+        prop="menuType"
         label="类型"
         align="center"
       >
         <template slot-scope="{row}">
-          <el-tag size="small" :type="row.menu_type === 1 ? 'success' : row.menu_type === 2 ? 'info' : ''">
+          <el-tag size="small" :type="row.menuType === 1 ? 'success' : row.menuType === 2 ? 'info' : ''">
             {{ types[row.menu_type] }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column
-        prop="parent_name"
+        prop="parentName"
         label="父节点"
         align="center"
       />
       <el-table-column
-        prop="permission"
+        prop="pageUrl"
         label="权限"
         align="center"
       />
       <el-table-column
-        prop="menu_key"
+        prop="url"
+        label="接口权限"
+        align="center"
+      />
+      <el-table-column
+        prop="menuKey"
         label="路由地址"
         align="center"
       />
       <el-table-column
-        prop="menu_order"
+        prop="sort"
         label="序号"
         align="center"
       />
       <el-table-column
-        prop="url"
+        prop="icon"
         header-align="center"
         align="center"
         :show-overflow-tooltip="true"
@@ -65,11 +70,6 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="note"
-        label="备注"
-        align="center"
-      />
       <el-table-column
         label="操作"
         align="center"
@@ -128,12 +128,12 @@ export default {
       menu('search').then(arr => {
         const other = {};
         for (let i = 0; i < arr.length; i++) {
-          this.o[arr[i].id] = arr[i].menu_name;
+          this.o[arr[i].id] = arr[i].menuName;
           const obj = { ...arr[i] };
           if (arr[i].parentId) {
-            obj.parentId = arr[i].parentId;
-            !other[arr[i].parentId] && (other[arr[i].parentId] = []);
-            other[arr[i].parentId].push(obj);
+            obj.pMenuId = arr[i].pMenuId;
+            !other[arr[i].pMenuId] && (other[arr[i].pMenuId] = []);
+            other[arr[i].pMenuId].push(obj);
           } else {
             this.list.push(obj);
           }

@@ -22,10 +22,16 @@
           <el-input v-model.trim="form.userName" placeholder="长度4至20位，以字母开头，字母，数字，减号，下划线" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model.trim="form.password" show-password placeholder="长度6至12位" />
+          <el-input v-model.trim="form.password" show-password placeholder="长度6至18位" />
         </el-form-item>
         <el-form-item label="昵称" prop="nickName">
           <el-input v-model.trim="form.nickName" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="userEmail">
+          <el-input v-model.trim="form.userEmail" placeholder="邮箱格式示例：123@qq.com" />
+        </el-form-item>
+        <el-form-item label="手机号码" prop="userTelephoneNumber">
+          <el-input v-model.trim="form.userTelephoneNumber" placeholder="长度11位" />
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
           <ImgUpLoad :img="form.avatar" :title="form.userName" @setImg="setIcon" />
@@ -55,161 +61,176 @@
 </template>
 
 <script>
-import { list, signup, del, edit, getRoles } from '@/api/users'; // 引入函数
-import ImgUpLoad from '@/views/common/imgUpload';
-import md5 from 'md5';
+  import { list, signup, del, edit, onOff, getRoles } from '@/api/users'; // 引入函数
+  import ImgUpLoad from '@/views/common/imgUpload';
+  import md5 from 'md5';
 
-export default {
-  name: 'Users',
-  components: { ImgUpLoad },
-  data() {
-    return {
-      rules: {
-        userName: [{ required: true, trigger: 'blur' }],
-        role: [{ required: true, message: '请选择角色', trigger: 'change' }]
+  export default {
+    name: 'Users',
+    components: { ImgUpLoad },
+    data() {
+      return {
+        rules: {
+          userName: [{ required: true, trigger: 'blur' }],
+          roleId: [{ required: true, message: '请选择角色', trigger: 'change' }],
+          userEmail: [{ required: true, message: '请输入邮箱', trigger: 'change' }],
+          userTelephoneNumber: [{ required: true, message: '请输入手机号码', trigger: 'change' }]
+        },
+        form: {
+          id: '',
+          userName: '',
+          nickName: '',
+          userEmail: '',
+          userTelephoneNumber: '',
+          roleId: '',
+          remark: '',
+          status: 0,
+          password: '',
+          avatar: ''
+        },
+        roles: {},
+        dialogVisible: false,
+        reqLoading: false,
+        list: [],
+        listQuery: { page: 1, userName: '' },
+        loading: false,
+        tableHeader: [
+          { field: 'userName', sortable: 'custom', title: '账号' },
+          { field: 'nickName', sortable: 'custom', title: '昵称' },
+          { field: 'userEmail', sortable: 'custom', title: '邮箱' },
+          { field: 'userTelephoneNumber', sortable: 'custom', title: '手机号码' },
+          { field: 'avatar', title: '头像', width: '200px', img: 'avatar' },
+          { field: 'status', title: '账号启禁', switch: 'handleStatus', inactive: 1, active: 0 },
+          { field: 'roleId', title: '角色', formatter: 'roleId' },
+          { field: 'updateTime', title: '更新时间' },
+          { field: 'remark', title: '备注' },
+          { field: 'toolbar', title: '操作', width: '200px' }
+        ],
+        toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
+          title: '删除',
+          field: 'handleDel',
+          type: 'danger'
+        }],
+        total: 0,
+        title: '添加',
+        tableControl: true
+      };
+    },
+    created() { // 组件创建的时候
+      getRoles().then(res => {
+        res.map(item => {
+          this.roles[item.id] = item.roleName;
+        });
+      });
+      this.search(); // 调用查询列表的函数
+    },
+    methods: {
+      formatter(row, field) {
+        return this.roles[row[field]];
       },
-      form: { userName: '', nickName: '', roleId: '', remark: '', status: 0, password: '', avatar: '' },
-      roles: {},
-      dialogVisible: false,
-      reqLoading: false,
-      list: [],
-      listQuery: { page: 1, userName: '' },
-      loading: false,
-      tableHeader: [
-        { field: 'userName', sortable: 'custom', title: '账号' },
-        { field: 'nickName', sortable: 'custom', title: '昵称' },
-        { field: 'avatar', title: '头像', width: '200px', img: 'avatar' },
-        { field: 'status', title: '账号启禁', switch: 'handleStatus', inactive: 1, active: 0 },
-        { field: 'roleId', title: '角色', formatter: 'roleId' },
-        { field: 'updateTime', title: '更新时间' },
-        { field: 'remark', title: '备注' },
-        { field: 'toolbar', title: '操作', width: '200px' }
-      ],
-      toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
-        title: '删除',
-        field: 'handleDel',
-        type: 'danger'
-      }],
-      total: 0,
-      title: '添加',
-      tableControl: true
-    };
-  },
-  created() { // 组件创建的时候
-    getRoles().then(res => {
-      res.map(item => {
-        this.roles[item.id] = item.roleName;
-      });
-    });
-    this.search(); // 调用查询列表的函数
-  },
-  methods: {
-    formatter(row, field) {
-      return this.roles[row[field]];
-    },
-    setIcon(url) {
-      this.form.avatar = url;
-    },
-    search(k) {
-      this.loading = true;
-      k && (this.listQuery.page = k.page);
-      list(this.listQuery).then(res => { // 请求后台接口
-        this.list = res.list;
-        this.total = res.total;
-        this.loading = false;
-      }).catch(() => {
-        this.loading = false;
-      });
-    },
-    onSubmit() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.title !== '添加' ? this.editReq() : this.addReq();
-        }
-      });
-    },
-    editReq() {
-      if (this.form.user_pwd && (this.form.user_pwd.length > 13 || this.form.user_pwd.length < 6)) {
-        this.$message.error('密码格式有误');
-        return;
-      }
-      this.reqLoading = true;
-      const param = { ...this.form };
-      if (param.user_pwd) {
-        param.user_pwd = md5(param.user_pwd);
-      }
-      edit(param).then(() => {
-        this.reqLoading = false;
-        this.dialogVisible = false;
-        this.search();
-      }).catch(() => {
-        this.reqLoading = false;
-      });
-    },
-    addReq() {
-      const param = { ...this.form };
-      if (param.user_pwd.length > 13 || param.user_pwd.length < 6) {
-        this.$message.error('密码格式有误');
-        return;
-      }
-      this.reqLoading = true;
-      param.user_pwd = md5(param.user_pwd);
-      signup(param).then(res => {
-        this.reqLoading = false;
-        this.dialogVisible = false;
-        this.search();
-      }).catch(() => {
-        this.reqLoading = false;
-      });
-    },
-    handleEdit(data) {
-      this.title = '编辑 -  ' + data.userName;
-      this.dialogVisible = true;
-      this.form.id = data.id;
-      for (const i in this.form) {
-        this.form[i] = data[i];
-      }
-      this.form.roleId = String(data.roleId);
-    },
-    handleAdd() {
-      this.form = { ...{}, ...this.$options.data().form };
-      this.title = '添加';
-      this.dialogVisible = true;
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate();
-      });
-    },
-    handleStatus(data) {
-      this.loading = true;
-      edit(data).then(() => {
-        this.loading = false;
-      }).catch(() => {
-        this.search();
-      });
-    },
-    handleDel(data) {
-      if (data.status) {
-        this.$message.error('删除前请先禁用它！');
-        return;
-      }
-      this.$confirm('确认删除么?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      setIcon(url) {
+        this.form.avatar = url;
+      },
+      search(k) {
         this.loading = true;
-        del({ id: data.id }).then(() => {
-          this.search();
+        k && (this.listQuery.page = k.page);
+        list(this.listQuery).then(res => { // 请求后台接口
+          this.list = res.list;
+          this.total = res.total;
           this.loading = false;
         }).catch(() => {
           this.loading = false;
         });
-      }).catch(() => {
-        this.loading = false;
-      });
+      },
+      onSubmit() {
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.title !== '添加' ? this.editReq() : this.addReq();
+          }
+        });
+      },
+      editReq() {
+        if (this.form.password && (this.form.password.length > 18 || this.form.password.length < 6)) {
+          this.$message.error('密码格式有误');
+          return;
+        }
+        this.reqLoading = true;
+        const param = { ...this.form };
+        if (param.password) {
+          param.password = md5(param.password);
+        }
+        edit(param).then(() => {
+          this.reqLoading = false;
+          this.dialogVisible = false;
+          this.search();
+        }).catch(() => {
+          this.reqLoading = false;
+        });
+      },
+      addReq() {
+        const param = { ...this.form };
+        if (param.password.length > 18 || param.password.length < 6) {
+          this.$message.error('密码格式有误');
+          return;
+        }
+        this.reqLoading = true;
+        param.password = md5(param.password);
+        signup(param).then(res => {
+          this.reqLoading = false;
+          this.dialogVisible = false;
+          this.search();
+        }).catch(() => {
+          this.reqLoading = false;
+        });
+      },
+      handleEdit(data) {
+        this.title = '编辑 -  ' + data.userName;
+        this.dialogVisible = true;
+        this.form.id = data.id;
+        for (const i in this.form) {
+          this.form[i] = data[i];
+        }
+        this.form.roleId = String(data.roleId);
+      },
+      handleAdd() {
+        this.form = { ...{}, ...this.$options.data().form };
+        this.title = '添加';
+        this.dialogVisible = true;
+        this.$nextTick(() => {
+          this.$refs.form.clearValidate();
+        });
+      },
+      handleStatus(data) {
+        this.loading = true;
+        onOff(data).then(() => {
+          this.loading = false;
+        }).catch(() => {
+          this.search();
+        });
+      },
+      handleDel(data) {
+        if (data.status) {
+          this.$message.error('删除前请先禁用它！');
+          return;
+        }
+        this.$confirm('确认删除么?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.loading = true;
+          del({ id: data.id }).then(() => {
+            this.search();
+            this.loading = false;
+          }).catch(() => {
+            this.loading = false;
+          });
+        }).catch(() => {
+          this.loading = false;
+        });
+      }
     }
-  }
-};
+  };
 </script>
 <style scoped>
 </style>

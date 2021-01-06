@@ -12,6 +12,10 @@ export function edit(data) {
   return Request.post('/users/edit', data);
 }
 
+export function onOff(data) {
+  return Request.post('/users/onOff', data);
+}
+
 export function del(data) {
   return Request.post('/users/del', data);
 }

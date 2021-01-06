@@ -53,145 +53,146 @@
 </template>
 
 <script>
-import { menu } from '@/api/menu';
-import { getSvg, types } from './config';
-import SvgList from './svg-list';
+  import { menu } from '@/api/menu';
+  import { getSvg, types } from './config';
+  import SvgList from './svg-list';
 
-export default {
-  name: 'Menu',
-  components: { SvgList },
-  props: {
-    visible: {
-      type: Boolean,
-      default() {
-        return false;
-      }
-    },
-    info: {
-      type: Object,
-      default() {
-        return null;
-      }
-    },
-    list: {
-      type: Array,
-      default() {
-        return [];
-      }
-    }
-  },
-  data() {
-    const menu_key = (rule, value, callback) => {
-      if (!(/^[0-9a-zA-Z]{4,16}$/.test(value))) {
-        callback(new Error('code应为4-16个字符,可使用字母、数字(不包含空格)'));
-      } else {
-        callback();
-      }
-    };
-    return {
-      defaultProps: {
-        children: 'children',
-        label: 'menu_name'
-      },
-      rules: {
-        menu_name: [
-          { required: true, message: '请输入菜单名称', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-        ],
-        menu_key: [
-          { required: true, message: '请输入路由地址', trigger: 'blur' },
-          { validator: menu_key, trigger: 'blur' }
-        ],
-        parentId: [
-          { required: true, message: '请选择父节点', trigger: 'blur' }
-        ],
-        permission: [
-          { required: true, message: '请输入权限', trigger: 'blur' }
-        ]
-      },
-      types,
-      svg: [],
-      treeVisible: false,
-      svgVisible: false,
-      form: {
-        note: '',
-        menu_name: '',
-        permission: '',
-        parentId: 0,
-        parent_name: '',
-        menu_order: '',
-        menu_type: 0
-      }
-    };
-  },
-  created() {
-    this.getSvg();
-    if (this.info) {
-      this.form = { ...this.info };
-      delete this.form.children;
-    }
-  },
-  methods: {
-    handleChangeType() {
-      this.$refs.form.clearValidate();
-      if (!this.form.id) {
-        this.form.parent_name = '';
-        this.form.parentId = 0;
-      }
-    },
-    setIcon(icon) {
-      this.form.icon = icon;
-      this.svgVisible = false;
-    },
-    closeDialog(refresh) {
-      this.$emit('close', refresh);
-    },
-    getSvg,
-    handleNodeClick(data) {
-      if (data.menu_type === 0) {
-        this.$message.error('父节点不能是按钮');
-        return;
-      }
-      if (data.menu_type === 1 && this.form.menu_type === 1) {
-        this.$message.error('菜单的父节点只能是目录');
-        return;
-      }
-      if (data.menu_type === 2 && this.form.menu_type === 0) {
-        this.$message.error('按钮的父节点只能是菜单');
-        return;
-      }
-      this.form.parent_name = data.menu_name;
-      this.form.parentId = data.id;
-      this.treeVisible = false;
-    },
-    onSubmit() {
-      this.$refs['form'].validate((valid) => {
-        if (valid) {
-          if (this.form.menu_type < 2 && this.form.parentId === 0) {
-            this.$message.error('请指定父节点');
-            return;
-          }
-          menu(this.form.id ? 'edit' : 'add', this.form).then(() => {
-            this.closeDialog(1);
-          });
+  export default {
+    name: 'Menu',
+    components: { SvgList },
+    props: {
+      visible: {
+        type: Boolean,
+        default() {
+          return false;
         }
-      });
+      },
+      info: {
+        type: Object,
+        default() {
+          return null;
+        }
+      },
+      list: {
+        type: Array,
+        default() {
+          return [];
+        }
+      }
+    },
+    data() {
+      const menu_key = (rule, value, callback) => {
+        if (!(/^[0-9a-zA-Z]{4,16}$/.test(value))) {
+          callback(new Error('code应为4-16个字符,可使用字母、数字(不包含空格)'));
+        } else {
+          callback();
+        }
+      };
+      return {
+        defaultProps: {
+          children: 'children',
+          label: 'menu_name'
+        },
+        rules: {
+          menuName: [
+            { required: true, message: '请输入菜单名称', trigger: 'blur' },
+            { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+          ],
+          menuKey: [
+            { required: true, message: '请输入路由地址', trigger: 'blur' },
+            { validator: menu_key, trigger: 'blur' }
+          ],
+          pMenuId: [
+            { required: true, message: '请选择父节点', trigger: 'blur' }
+          ],
+          pageUrl: [
+            { required: true, message: '请输入权限', trigger: 'blur' }
+          ]
+        },
+        types,
+        svg: [],
+        treeVisible: false,
+        svgVisible: false,
+        form: {
+          note: '',
+          menuName: '',
+          pageUrl: '',
+          url: '',
+          pMenuId: 0,
+          parentName: '',
+          sort: '',
+          menuType: 0
+        }
+      };
+    },
+    created() {
+      this.getSvg();
+      if (this.info) {
+        this.form = { ...this.info };
+        delete this.form.children;
+      }
+    },
+    methods: {
+      handleChangeType() {
+        this.$refs.form.clearValidate();
+        if (!this.form.id) {
+          this.form.parentName = '';
+          this.form.parentId = 0;
+        }
+      },
+      setIcon(icon) {
+        this.form.icon = icon;
+        this.svgVisible = false;
+      },
+      closeDialog(refresh) {
+        this.$emit('close', refresh);
+      },
+      getSvg,
+      handleNodeClick(data) {
+        if (data.menuType === 0) {
+          this.$message.error('父节点不能是按钮');
+          return;
+        }
+        if (data.menuType === 1 && this.form.menuType === 1) {
+          this.$message.error('菜单的父节点只能是目录');
+          return;
+        }
+        if (data.menuType === 2 && this.form.menuType === 0) {
+          this.$message.error('按钮的父节点只能是菜单');
+          return;
+        }
+        this.form.parentName = data.menuName;
+        this.form.pMenuId = data.id;
+        this.treeVisible = false;
+      },
+      onSubmit() {
+        this.$refs['form'].validate((valid) => {
+          if (valid) {
+            if (this.form.menuType < 2 && this.form.pMenuId === 0) {
+              this.$message.error('请指定父节点');
+              return;
+            }
+            menu(this.form.id ? 'edit' : 'add', this.form).then(() => {
+              this.closeDialog(1);
+            });
+          }
+        });
+      }
     }
-  }
-};
+  };
 </script>
 <style lang="scss">
-.mod-menu {
-  .menu-list__input,
-  {
-    > .el-input__inner {
-      cursor: pointer;
+  .mod-menu {
+    .menu-list__input,
+    {
+      > .el-input__inner {
+        cursor: pointer;
+      }
     }
   }
-}
 
-.chooseIcon {
-  width: 200px !important;
-}
+  .chooseIcon {
+    width: 200px !important;
+  }
 </style>
 
