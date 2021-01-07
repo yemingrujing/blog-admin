@@ -3,7 +3,7 @@
     <!-- 表格查询条件 -->
     <div class="filter-container">
       <el-input
-        v-model.trim="listQuery.role_name"
+        v-model.trim="listQuery.roleName"
         placeholder="角色名称"
         style="width: 200px;"
         class="filter-item"
