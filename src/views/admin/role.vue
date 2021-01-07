@@ -25,7 +25,7 @@
       @emitEvent="(args)=>this.$emitEvent(args)"
     />
     <!-- 新增 -->
-    <el-dialog :visible.sync="dialogVisible" :title="title">
+    <el-dialog :visible.sync="dialogVisible" :title="title" @close="onClose">
       <el-form ref="role" :model="role" label-width="80px" label-position="left" :rules="rules">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model.trim="role.roleName" placeholder="请输入角色名称" clearable />
@@ -75,13 +75,13 @@ export default {
     return {
       change: false,
       rules: { roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }] },
-      role: { roleName: '', delFlag: 0, roleKey: '' },
+      role: { roleName: '', delFlag: 0, menuIds: '' },
       dialogVisible: false,
       title: '添加角色',
       treeLoading: false,
       listLoading: false,
       list: [],
-      roleKey: [],
+      menuIds: [],
       total: 0,
       listQuery: { page: 1, roleName: '' },
       editData: '',
@@ -90,7 +90,7 @@ export default {
       checkStrictly: false,
       defaultProps: {
         children: 'children',
-        label: 'name'
+        label: 'menuName'
       },
       tableHeader: [
         { field: 'roleName', title: '角色名称', fixed: 'left' },
@@ -161,13 +161,11 @@ export default {
         this.tree = [];
         const childes = {};
         for (let i = 0; i < list.length; i++) {
-          const obj = {};
-          obj.id = list[i].id;
-          obj.name = list[i].menu_name;
-          if (list[i].parentId) { // 相同父级的子集存储到childes下以父级id为key的arr里面
-            obj.parentId = list[i].parentId;
-            !childes[list[i].parentId] && (childes[list[i].parentId] = []);
-            childes[list[i].parentId].push(obj);
+          const obj = { ...list[i] };
+          if (list[i].pMenuId) { // 相同父级的子集存储到childes下以父级id为key的arr里面
+            obj.pMenuId = list[i].pMenuId;
+            !childes[list[i].pMenuId] && (childes[list[i].pMenuId] = []);
+            childes[list[i].pMenuId].push(obj);
           } else { // 顶级菜单
             this.tree.push(obj);
           }
@@ -175,23 +173,27 @@ export default {
         this.treeSort(this.tree, childes, fathers);
         this.$refs.tree.setCheckedKeys([]);
         this.treeLoading = false;
-        item && this.$nextTick(() => {
-          const roleKey = item.roleKey.split(','); // 已被选中节点
-          const checked = roleKey.filter(v => fathers.indexOf(v) === -1);
-          this.$refs.tree.setCheckedKeys(checked);
-        });
+        if (item.menuIds) {
+          this.checkStrictly = true;
+          item && this.$nextTick(() => {
+            const menuIds = item.menuIds.split(','); // 已被选中节点
+            const checked = menuIds.filter(v => fathers.indexOf(v) === -1);
+            this.$refs.tree.setCheckedKeys(checked);
+            this.checkStrictly = false;
+          });
+        }
       }).catch(() => {
         this.treeLoading = false;
       });
     },
     confirmRole() {
-      this.roleKey = [...this.$refs.tree.getCheckedKeys(), ...this.$refs.tree.getHalfCheckedKeys()];
-      if (!this.roleKey.length) {
+      this.menuIds = [...this.$refs.tree.getCheckedKeys(), ...this.$refs.tree.getHalfCheckedKeys()];
+      if (!this.menuIds.length) {
         this.$message.error('请选择授权项');
         return;
       }
       this.$refs['role'].validate((valid) => {
-        this.role.roleKey = this.roleKey.join(',');
+        this.role.menuIds = this.menuIds.join(',');
         if (valid) {
           this.title === '添加角色' ? this.addReq() : this.editReq();
         }
@@ -234,6 +236,11 @@ export default {
         });
       }).catch(() => {
       });
+    },
+    onClose() {
+      for (let i = 0; i < this.$refs.tree.store._getAllNodes().length; i++) {
+        this.$refs.tree.store._getAllNodes()[i].expanded = false;
+      }
     }
   }
 };

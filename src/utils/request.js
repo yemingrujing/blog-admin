@@ -42,10 +42,10 @@ class Request {
         const res = response.data;
         res.errMsg && Message({
           message: res.errMsg,
-          type: res.code ? 'success' : 'error',
+          type: res.code && res.code === 200 ? 'success' : 'error',
           duration: 2 * 1000
         });
-        if (res.code) {
+        if (res.code && res.code === 200) {
           return res;
         } else {
           return Promise.reject(res.msg);

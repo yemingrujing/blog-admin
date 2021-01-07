@@ -27,8 +27,8 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <el-tag size="small" :type="row.menuType === 1 ? 'success' : row.menuType === 2 ? 'info' : ''">
-            {{ types[row.menu_type] }}
+          <el-tag size="small" :type="row.menuType === 1 ? 'success' : row.menuType === 0 ? 'info' : ''">
+            {{ types[row.menuType] }}
           </el-tag>
         </template>
       </el-table-column>
@@ -44,7 +44,7 @@
       />
       <el-table-column
         prop="url"
-        label="接口权限"
+        label="按钮权限"
         align="center"
       />
       <el-table-column
@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { menu } from '@/api/menu';
+import { menu, del } from '@/api/menu';
 import { types } from './config';
 import AddOrEdit from './addOrEdit';
 
@@ -130,7 +130,7 @@ export default {
         for (let i = 0; i < arr.length; i++) {
           this.o[arr[i].id] = arr[i].menuName;
           const obj = { ...arr[i] };
-          if (arr[i].parentId) {
+          if (arr[i].pMenuId) {
             obj.pMenuId = arr[i].pMenuId;
             !other[arr[i].pMenuId] && (other[arr[i].pMenuId] = []);
             other[arr[i].pMenuId].push(obj);
@@ -163,7 +163,7 @@ export default {
     },
     handleDel(data) {
       this.listLoading = true;
-      menu('del', { id: data.id }).then(() => {
+      del(data.id, { id: data.id }).then(() => {
         this.search();
       }).catch(() => {
         this.listLoading = false;

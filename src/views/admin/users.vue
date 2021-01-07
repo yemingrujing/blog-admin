@@ -61,176 +61,201 @@
 </template>
 
 <script>
-  import { list, signup, del, edit, onOff, getRoles } from '@/api/users'; // 引入函数
-  import ImgUpLoad from '@/views/common/imgUpload';
-  import md5 from 'md5';
+import { list, signup, del, edit, onOff, getRoles } from '@/api/users'; // 引入函数
+import ImgUpLoad from '@/views/common/imgUpload';
+import md5 from 'md5';
 
-  export default {
-    name: 'Users',
-    components: { ImgUpLoad },
-    data() {
-      return {
-        rules: {
-          userName: [{ required: true, trigger: 'blur' }],
-          roleId: [{ required: true, message: '请选择角色', trigger: 'change' }],
-          userEmail: [{ required: true, message: '请输入邮箱', trigger: 'change' }],
-          userTelephoneNumber: [{ required: true, message: '请输入手机号码', trigger: 'change' }]
-        },
-        form: {
-          id: '',
-          userName: '',
-          nickName: '',
-          userEmail: '',
-          userTelephoneNumber: '',
-          roleId: '',
-          remark: '',
-          status: 0,
-          password: '',
-          avatar: ''
-        },
-        roles: {},
-        dialogVisible: false,
-        reqLoading: false,
-        list: [],
-        listQuery: { page: 1, userName: '' },
-        loading: false,
-        tableHeader: [
-          { field: 'userName', sortable: 'custom', title: '账号' },
-          { field: 'nickName', sortable: 'custom', title: '昵称' },
-          { field: 'userEmail', sortable: 'custom', title: '邮箱' },
-          { field: 'userTelephoneNumber', sortable: 'custom', title: '手机号码' },
-          { field: 'avatar', title: '头像', width: '200px', img: 'avatar' },
-          { field: 'status', title: '账号启禁', switch: 'handleStatus', inactive: 1, active: 0 },
-          { field: 'roleId', title: '角色', formatter: 'roleId' },
-          { field: 'updateTime', title: '更新时间' },
-          { field: 'remark', title: '备注' },
-          { field: 'toolbar', title: '操作', width: '200px' }
-        ],
-        toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
-          title: '删除',
-          field: 'handleDel',
-          type: 'danger'
-        }],
-        total: 0,
-        title: '添加',
-        tableControl: true
-      };
-    },
-    created() { // 组件创建的时候
-      getRoles().then(res => {
-        res.map(item => {
-          this.roles[item.id] = item.roleName;
-        });
-      });
-      this.search(); // 调用查询列表的函数
-    },
-    methods: {
-      formatter(row, field) {
-        return this.roles[row[field]];
-      },
-      setIcon(url) {
-        this.form.avatar = url;
-      },
-      search(k) {
-        this.loading = true;
-        k && (this.listQuery.page = k.page);
-        list(this.listQuery).then(res => { // 请求后台接口
-          this.list = res.list;
-          this.total = res.total;
-          this.loading = false;
-        }).catch(() => {
-          this.loading = false;
-        });
-      },
-      onSubmit() {
-        this.$refs.form.validate((valid) => {
-          if (valid) {
-            this.title !== '添加' ? this.editReq() : this.addReq();
-          }
-        });
-      },
-      editReq() {
-        if (this.form.password && (this.form.password.length > 18 || this.form.password.length < 6)) {
-          this.$message.error('密码格式有误');
-          return;
-        }
-        this.reqLoading = true;
-        const param = { ...this.form };
-        if (param.password) {
-          param.password = md5(param.password);
-        }
-        edit(param).then(() => {
-          this.reqLoading = false;
-          this.dialogVisible = false;
-          this.search();
-        }).catch(() => {
-          this.reqLoading = false;
-        });
-      },
-      addReq() {
-        const param = { ...this.form };
-        if (param.password.length > 18 || param.password.length < 6) {
-          this.$message.error('密码格式有误');
-          return;
-        }
-        this.reqLoading = true;
-        param.password = md5(param.password);
-        signup(param).then(res => {
-          this.reqLoading = false;
-          this.dialogVisible = false;
-          this.search();
-        }).catch(() => {
-          this.reqLoading = false;
-        });
-      },
-      handleEdit(data) {
-        this.title = '编辑 -  ' + data.userName;
-        this.dialogVisible = true;
-        this.form.id = data.id;
-        for (const i in this.form) {
-          this.form[i] = data[i];
-        }
-        this.form.roleId = String(data.roleId);
-      },
-      handleAdd() {
-        this.form = { ...{}, ...this.$options.data().form };
-        this.title = '添加';
-        this.dialogVisible = true;
-        this.$nextTick(() => {
-          this.$refs.form.clearValidate();
-        });
-      },
-      handleStatus(data) {
-        this.loading = true;
-        onOff(data).then(() => {
-          this.loading = false;
-        }).catch(() => {
-          this.search();
-        });
-      },
-      handleDel(data) {
-        if (data.status) {
-          this.$message.error('删除前请先禁用它！');
-          return;
-        }
-        this.$confirm('确认删除么?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.loading = true;
-          del({ id: data.id }).then(() => {
-            this.search();
-            this.loading = false;
-          }).catch(() => {
-            this.loading = false;
-          });
-        }).catch(() => {
-          this.loading = false;
-        });
+export default {
+  name: 'Users',
+  components: { ImgUpLoad },
+  data() {
+    var checkMobile = (rule, value, cb) => {
+      const regMobile = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+      if (regMobile.test(value)) {
+        // 合法的手机号码
+        return cb();
       }
+      cb(new Error('手机号码格式不正确'));
+    };
+    var checkEmail = (rule, value, cb) => {
+      const regEmail = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+      if (regEmail.test(value)) {
+        // 合法的邮箱
+        return cb();
+      }
+      cb(new Error('请输入合法的邮箱'));
+    };
+    return {
+      rules: {
+        userName: [{ required: true, trigger: 'blur' }, {
+          min: 4,
+          max: 20,
+          message: '长度4至20位，以字母开头，字母，数字，减号，下划线',
+          trigger: "blur"
+        }],
+        password: [{ required: true, message: '必填项', trigger: 'blur' }, {
+          min: 6, max: "18", message: '密码长度为6-18位英文/数字/特殊符号', trigger: "blur"
+        }],
+        roleId: [{ required: true, message: '请选择角色', trigger: 'change' }],
+        userEmail: [{ required: true, message: '请输入邮箱', trigger: 'blur' }, { validator: checkEmail, trigger: "blur" }],
+        userTelephoneNumber: [{ required: true, message: '请输入手机号码', trigger: 'blur' }, {
+          validator: checkMobile,
+          trigger: "blur"
+        }]
+      },
+      form: {
+        id: '',
+        userName: '',
+        nickName: '',
+        userEmail: '',
+        userTelephoneNumber: '',
+        roleId: '',
+        remark: '',
+        status: 0,
+        password: '',
+        avatar: ''
+      },
+      roles: {},
+      dialogVisible: false,
+      reqLoading: false,
+      list: [],
+      listQuery: { page: 1, userName: '' },
+      loading: false,
+      tableHeader: [
+        { field: 'userName', sortable: 'custom', title: '账号' },
+        { field: 'nickName', sortable: 'custom', title: '昵称' },
+        { field: 'userEmail', sortable: 'custom', title: '邮箱' },
+        { field: 'userTelephoneNumber', sortable: 'custom', title: '手机号码' },
+        { field: 'avatar', title: '头像', width: '200px', img: 'avatar' },
+        { field: 'status', title: '账号启禁', switch: 'handleStatus', inactive: 1, active: 0 },
+        { field: 'roleId', title: '角色', formatter: 'roleId' },
+        { field: 'updateTime', title: '更新时间' },
+        { field: 'remark', title: '备注' },
+        { field: 'toolbar', title: '操作', width: '200px' }
+      ],
+      toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
+        title: '删除',
+        field: 'handleDel',
+        type: 'danger'
+      }],
+      total: 0,
+      title: '添加',
+      tableControl: true
+    };
+  },
+  created() { // 组件创建的时候
+    getRoles().then(res => {
+      res.map(item => {
+        this.roles[item.id] = item.roleName;
+      });
+    });
+    this.search(); // 调用查询列表的函数
+  },
+  methods: {
+    formatter(row, field) {
+      return this.roles[row[field]];
+    },
+    setIcon(url) {
+      this.form.avatar = url;
+    },
+    search(k) {
+      this.loading = true;
+      k && (this.listQuery.page = k.page);
+      list(this.listQuery).then(res => { // 请求后台接口
+        this.list = res.list;
+        this.total = res.total;
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
+      });
+    },
+    onSubmit() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.title !== '添加' ? this.editReq() : this.addReq();
+        }
+      });
+    },
+    editReq() {
+      this.$refs.form.validate(valid => {
+        if (!valid) return;
+      });
+      this.reqLoading = true;
+      const param = { ...this.form };
+      if (param.password) {
+        param.password = md5(param.password);
+      }
+      edit(param).then(() => {
+        this.reqLoading = false;
+        this.dialogVisible = false;
+        this.search();
+      }).catch(() => {
+        this.reqLoading = false; x;
+      });
+    },
+    addReq() {
+      this.$refs.form.validate(valid => {
+        if (!valid) return;
+      });
+      this.reqLoading = true;
+      const param = { ...this.form };
+      param.password = md5(param.password);
+      signup(param).then(res => {
+        this.reqLoading = false;
+        this.dialogVisible = false;
+        this.search();
+      }).catch(() => {
+        this.reqLoading = false;
+      });
+    },
+    handleEdit(data) {
+      this.title = '编辑 -  ' + data.userName;
+      this.dialogVisible = true;
+      this.form.id = data.id;
+      for (const i in this.form) {
+        this.form[i] = data[i];
+      }
+      this.form.roleId = String(data.roleId);
+    },
+    handleAdd() {
+      this.form = { ...{}, ...this.$options.data().form };
+      this.title = '添加';
+      this.dialogVisible = true;
+      this.$nextTick(() => {
+        this.$refs.form.clearValidate();
+      });
+    },
+    handleStatus(data) {
+      this.loading = true;
+      onOff(data).then(() => {
+        this.loading = false;
+      }).catch(() => {
+        this.search();
+      });
+    },
+    handleDel(data) {
+      if (data.status) {
+        this.$message.error('删除前请先禁用它！');
+        return;
+      }
+      this.$confirm('确认删除么?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true;
+        del({ id: data.id }).then(() => {
+          this.search();
+          this.loading = false;
+        }).catch(() => {
+          this.loading = false;
+        });
+      }).catch(() => {
+        this.loading = false;
+      });
     }
-  };
+  }
+};
 </script>
 <style scoped>
 </style>

@@ -1,4 +1,4 @@
-export const types = ['按钮', '菜单', '目录'];
+export const types = ['目录', '菜单', '按钮'];
 
 export function getSvg() {
   const files = require.context('../../../icons/svg', false, /.(svg)$/);
