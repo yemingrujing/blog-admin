@@ -56,14 +56,24 @@ export const asyncRoutes = [
   {
     path: '/report',
     component: Layout,
-    redirect: '/dashboard',
-    meta: { title: 'Dashboard', icon: 'chart', key: 'report' },
+    redirect: '/report/dashboard',
+    name: 'Report',
+    meta: {
+      title: '综合报表',
+      icon: 'chart',
+      key: 'report'
+    },
     children: [
       {
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'chart', affix: true, key: 'dashboard' }
+        meta: {
+          title: 'Dashboard',
+          // icon: 'chart',
+          // affix: true,
+          key: 'dashboard'
+        }
       }
     ]
   },

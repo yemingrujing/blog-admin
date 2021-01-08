@@ -11,16 +11,16 @@
             <el-radio v-for="(k,i) in types" :key="i" :label="i">{{ k }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="form.menuType !==0" label="路由地址" prop="pageUrl">
+        <el-form-item v-if="form.menuType ===1" label="路由地址" prop="pageUrl">
           <el-input v-model.trim="form.pageUrl" placeholder="请输入4~16位纯英文" clearable :disabled="form.id !==undefined" />
         </el-form-item>
-        <el-form-item v-if="form.menuType === 0" label="权限" prop="url">
+        <el-form-item v-if="form.menuType === 2" label="权限" prop="url">
           <el-input v-model.trim="form.url" placeholder="请输入权限" clearable />
         </el-form-item>
-        <el-form-item v-if="form.menuType !== 0" label="序号" prop="sort">
+        <el-form-item label="序号" prop="sort">
           <el-input-number v-model="form.sort" controls-position="right" :min="1" label="序号" />
         </el-form-item>
-        <el-form-item v-if="form.menuType !==2" label="父节点">
+        <el-form-item v-if="form.menuType !==0" label="父节点">
           <el-input v-model="form.parentName" readonly placeholder="点击选择" @focus="treeVisible = true" />
         </el-form-item>
         <el-form-item v-if="form.menuType !== 0" label="图标" prop="icon">

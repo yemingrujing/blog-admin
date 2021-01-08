@@ -9,15 +9,15 @@ export function signup(data) {
 }
 
 export function edit(data) {
-  return Request.post('/users/edit', data);
+  return Request.post('/api/users/edit', data);
 }
 
 export function onOff(data) {
-  return Request.post('/users/onOff', data);
+  return Request.post('/api/users/onOff', data);
 }
 
 export function del(data) {
-  return Request.post('/users/del', data);
+  return Request.post('/api/users/del', data);
 }
 
 export function getRoles(data) {
