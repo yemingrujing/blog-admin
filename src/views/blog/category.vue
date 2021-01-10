@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 表格查询条件 -->
     <div class="filter-container">
-      <el-input v-model.trim="listQuery.category_name" placeholder="分类名称" style="width: 200px;" clearable />
+      <el-input v-model.trim="listQuery.categoryName" placeholder="分类名称" style="width: 200px;" clearable />
       <el-button type="primary" class="filter-item" @click="search">查询</el-button>
       <el-button type="primary" class="filter-item" @click="add">添加</el-button>
     </div>
@@ -14,9 +14,21 @@
       :list-loading="loading"
       @emitEvent="(args)=>this.$emitEvent(args)"
     />
-    <el-dialog :title="title" :visible.sync="alterVisible" width="20%">
-      <el-input v-model.trim="form.category_name" />
-      <span slot="footer" class="dialog-footer"><el-button type="primary" @click="ok()">确 定</el-button></span>
+    <el-dialog :title="title" :visible.sync="alterVisible">
+      <el-form ref="role" :model="form" label-width="80px" label-position="left" :rules="rules">
+        <el-form-item label="分类名称" prop="categoryName">
+          <el-input v-model.trim="form.categoryName" placeholder="请输入分类名称" />
+        </el-form-item>
+        <el-form-item label="别名" prop="categoryAlias">
+          <el-input v-model.trim="form.categoryAlias" placeholder="请输入别名" />
+        </el-form-item>
+        <el-form-item label="描述" prop="categoryDescription">
+          <el-input v-model.trim="form.categoryDescription" placeholder="请输入描述" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="alterVisible = false">取 消</el-button>
+        <el-button type="primary" @click="ok()">确 定</el-button></span>
     </el-dialog>
     <el-dialog title="所属文章" :visible.sync="searchVisible">
       <el-table v-loading="articleLoading" :data="articleData">
@@ -37,100 +49,116 @@
 </template>
 
 <script>
-import { search, edit, add, del, belong } from '@/api/category';
+  import { search, edit, add, del, belong } from '@/api/category';
 
-export default {
-  name: 'Tags',
-  data() {
-    return {
-      list: [],
-      articleData: [],
-      total: 0,
-      loading: true,
-      title: '',
-      form: {},
-      alterVisible: false,
-      searchVisible: false,
-      articleLoading: false,
-      listQuery: { page: 1, category_name: '' },
-      tableHeader: [
-        { field: 'category_name', sortable: 'custom', title: '分类名称' },
-        { field: 'update_time', title: '更新时间' },
-        { field: 'toolbar', title: '操作' }
-      ],
-      toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
-        title: '查看所属文章',
-        field: 'handleShow',
-        type: 'success'
-      }, { title: '删除', field: 'handleDel', type: 'danger' }]
-    };
-  },
-  created() {
-    this.search();
-  },
-  methods: {
-    search(k) {
-      this.loading = true;
-      k && (this.listQuery.page = k.page);
-      search(this.listQuery).then(res => {
-        this.loading = false;
-        this.list = res.list;
-        this.total = res.total;
-      }).catch(() => {
-        this.loading = false;
-      });
+  export default {
+    name: 'Tags',
+    data() {
+      return {
+        rules: {
+          categoryName: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
+          categoryAlias: [{ required: true, message: '请输入别名', trigger: 'blur' }],
+          categoryDescription: [{ required: true, message: '请输入描述', trigger: 'blur' }]
+        },
+        list: [],
+        articleData: [],
+        total: 0,
+        loading: true,
+        title: '',
+        form: {},
+        alterVisible: false,
+        searchVisible: false,
+        articleLoading: false,
+        listQuery: { page: 1, categoryName: '' },
+        tableHeader: [
+          { field: 'categoryName', sortable: 'custom', title: '分类名称' },
+          { field: 'categoryAlias', sortable: 'custom', title: '别名' },
+          { field: 'categoryDescription', sortable: 'custom', title: '描述' },
+          { field: 'createTime', title: '更新时间' },
+          { field: 'toolbar', title: '操作' }
+        ],
+        toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
+          title: '查看所属文章',
+          field: 'handleShow',
+          type: 'success'
+        }, { title: '删除', field: 'handleDel', type: 'danger' }]
+      };
     },
-    handleEdit(data) {
-      this.title = '编辑标签';
-      this.alterVisible = true;
-      this.form = { category_name: data.category_name, id: data.id };
+    created() {
+      this.search();
     },
-    handleShow(data) {
-      this.searchVisible = true;
-      this.articleLoading = true;
-      belong({ category_name: data.category_name }).then(res => {
-        this.articleLoading = false;
-        this.articleData = res;
-        this.alterVisible = false;
-      }).catch(() => {
-        this.articleLoading = false;
-      });
-    },
-    ok() {
-      if (!this.form.category_name) {
-        return;
-      }
-      this.form.id ? edit(this.form).then(res => {
-        this.search();
-        this.alterVisible = false;
-      }) : add(this.form).then(res => {
-        this.search();
-        this.alterVisible = false;
-      });
-    },
-    add() {
-      this.alterVisible = true;
-      this.form = { category_name: '' };
-      this.title = '新增分类';
-    },
-    handleDel(data) {
-      this.$confirm('此操作将永久删除该标签, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+    methods: {
+      search(k) {
         this.loading = true;
-        del({ id: data.id }).then(res => {
-          this.search();
+        k && (this.listQuery.page = k.page);
+        search(this.listQuery).then(res => {
+          this.loading = false;
+          this.list = res.list;
+          this.total = res.total;
         }).catch(() => {
           this.loading = false;
         });
-      }).catch(() => {
-        this.loading = false;
-      });
+      },
+      handleEdit(data) {
+        this.title = '编辑标签';
+        this.alterVisible = true;
+        this.form = {
+          categoryName: data.categoryName,
+          categoryAlias: data.categoryAlias,
+          categoryDescription: data.categoryDescription,
+          id: data.id
+        };
+      },
+      handleShow(data) {
+        this.searchVisible = true;
+        this.articleLoading = true;
+        belong({
+          categoryName: data.categoryName,
+          categoryAlias: data.categoryAlias,
+          categoryDescription: data.categoryDescription
+        }).then(res => {
+          this.articleLoading = false;
+          this.articleData = res;
+          this.alterVisible = false;
+        }).catch(() => {
+          this.articleLoading = false;
+        });
+      },
+      ok() {
+        if (!this.form.category_name) {
+          return;
+        }
+        this.form.id ? edit(this.form).then(res => {
+          this.search();
+          this.alterVisible = false;
+        }) : add(this.form).then(res => {
+          this.search();
+          this.alterVisible = false;
+        });
+      },
+      add() {
+        this.alterVisible = true;
+        this.form = { categoryName: '', categoryAlias: '', categoryDescription: '' };
+        this.title = '新增分类';
+      },
+      handleDel(data) {
+        this.$confirm('此操作将永久删除该标签, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.loading = true;
+          del({ id: data.id }).then(res => {
+            this.search();
+          }).catch(() => {
+            this.loading = false;
+          });
+        }).catch(() => {
+          this.loading = false;
+        });
+      }
     }
-  }
-};
+  };
 </script>
 
 <style scoped>

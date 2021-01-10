@@ -66,7 +66,6 @@ export default {
         }
       });
       if (showingChildren.length === 1 && showingChildren[0].name === 'Home') {
-        console.log(showingChildren);
         return true;
       }
 

@@ -135,7 +135,7 @@
       },
       getSvg,
       handleNodeClick(data) {
-        if (data.menuType === 0) {
+        if (data.menuType === 2) {
           this.$message.error('父节点不能是按钮');
           return;
         }
@@ -143,7 +143,7 @@
           this.$message.error('菜单的父节点只能是目录');
           return;
         }
-        if (data.menuType === 2 && this.form.menuType === 0) {
+        if (data.menuType === 0 && this.form.menuType === 2) {
           this.$message.error('按钮的父节点只能是菜单');
           return;
         }
