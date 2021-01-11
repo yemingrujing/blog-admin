@@ -112,7 +112,6 @@ export default {
       this.form.status = status;
       this.form.articleContent = this.$refs.markdown.getMarkdown();
       const param = { ...this.form };
-      param.tagId = param.tagId.join(',');
       if (this.form.id) {
         edit(param).then(() => {
           this.form = this.$options.data().form;

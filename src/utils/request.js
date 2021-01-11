@@ -52,6 +52,16 @@ class Request {
         }
       },
       error => {
+        console.log("error.response：", error.response);
+        if (!error.response) {
+          sessionStorage.removeItem('req_' + error.config.baseURL + error.config.url);
+          Message({
+            message: '请求失败',
+            type: 'error',
+            duration: 2 * 1000
+          });
+          return Promise.reject('请求失败');
+        }
         if (error.response.status === 401) {
           router.push('/login');
         }

@@ -1,7 +1,7 @@
 import Request from '@/utils/request';
 
 export function list(data) {
-  return Request.post('/article/search', data);
+  return Request.post('/api/articles/search', data);
 }
 
 export function del(data) {

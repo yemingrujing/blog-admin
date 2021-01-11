@@ -13,7 +13,7 @@ export function detail(data) {
 }
 
 export function add(data) {
-  return Request.post('/article/add', data);
+  return Request.post('/api/articles/add', data);
 }
 
 export function edit(data) {
