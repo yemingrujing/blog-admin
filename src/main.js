@@ -3,6 +3,7 @@ import ElementUI from 'element-ui';
 import Element from 'element-ui';
 
 import { emitEvent } from '@/views/common/tools';
+import preventReClick from '@/utils/noDbClick';
 
 import './styles/element-variables.scss';
 import 'normalize.css/normalize.css';
@@ -29,6 +30,8 @@ Vue.use(Element, {
 
 Vue.component('nice-table', table);
 Vue.component('nice-pagination', pagination);
+/* 放重复点击 */
+Vue.use(preventReClick);
 
 new Vue({
   router,

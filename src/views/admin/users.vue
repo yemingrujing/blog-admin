@@ -51,7 +51,7 @@
           <el-input v-model.trim="form.remark" />
         </el-form-item>
         <el-form-item class="center">
-          <el-button type="primary" :loading="reqLoading" size="medium " @click="onSubmit">立即提交</el-button>
+          <el-button v-preventReClick type="primary" :loading="reqLoading" size="medium " @click="onSubmit">立即提交</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

@@ -40,15 +40,14 @@ export default {
       listQuery: { page: 1, article_title: '' },
       loading: false,
       tableHeader: [
-        { field: 'article_title', sortable: 'custom', title: '标题' },
-        { field: 'category_name', sortable: 'custom', title: '分类', width: '100px' },
-        { field: 'tag_name', sortable: 'custom', title: '标签' },
-        { field: 'readed', sortable: 'custom', title: '阅读数', width: '80px' },
+        { field: 'articleTitle', sortable: 'custom', title: '标题' },
+        { field: 'categoryName', sortable: 'custom', title: '分类', width: '100px' },
+        { field: 'tagName', sortable: 'custom', title: '标签' },
+        { field: 'articleViews', sortable: 'custom', title: '阅读数', width: '80px' },
         { field: 'cover', title: '封面图', width: '150px', img: 'cover' },
         { field: 'status', title: '发布状态', switch: 'handleStatus', inactive: 0, active: 1, width: '80px' },
-        { field: 'create_time', title: '创作时间' },
-        { field: 'update_time', title: '更新时间' },
-        { field: 'remark', title: '备注' },
+        { field: 'createTime', title: '创作时间' },
+        { field: 'updateTime', title: '更新时间' },
         { field: 'toolbar', title: '操作', width: '250px' }
       ],
       toolbarList: [{ title: '置顶评论', field: 'handleComment', type: 'success' }, {
@@ -93,8 +92,8 @@ export default {
       });
     },
     handleComment(item) {
-      this.form.article_id = item.id;
-      this.form.article_name = item.article_title;
+      this.form.articleId = item.id;
+      this.form.articleName = item.articleTitle;
       this.form.comment = '';
       this.form.author = 1;
       this.form.status = 1;

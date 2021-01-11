@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 表格查询条件 -->
     <div class="filter-container">
-      <el-input v-model.trim="listQuery.tag_name" placeholder="标签名称" style="width: 200px;" clearable />
+      <el-input v-model.trim="listQuery.tagName" placeholder="标签名称" style="width: 200px;" clearable />
       <el-button type="primary" class="filter-item" @click="search">查询</el-button>
       <el-button type="primary" class="filter-item" @click="add">添加</el-button>
     </div>
@@ -15,20 +15,33 @@
       @emitEvent="(args)=>this.$emitEvent(args)"
     />
     <el-dialog :title="title" :visible.sync="alterVisible" width="20%">
-      <el-input v-model.trim="form.tag_name" />
-      <span slot="footer" class="dialog-footer"><el-button type="primary" @click="ok()">确 定</el-button></span>
+      <el-form ref="role" :model="form" label-width="80px" label-position="left" :rules="rules">
+        <el-form-item label="分类名称" prop="tagName">
+          <el-input v-model.trim="form.tagName" placeholder="请输入标签名称" />
+        </el-form-item>
+        <el-form-item label="别名" prop="tagAlias">
+          <el-input v-model.trim="form.tagAlias" placeholder="请输入别名" />
+        </el-form-item>
+        <el-form-item label="描述" prop="tagDescription">
+          <el-input v-model.trim="form.tagDescription" placeholder="请输入描述信息" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="alterVisible = false">取 消</el-button>
+        <el-button type="primary" @click="ok()">确 定</el-button>
+      </span>
     </el-dialog>
     <el-dialog title="所属文章" :visible.sync="searchVisible">
       <el-table v-loading="articleLoading" :data="articleData">
-        <el-table-column property="article_title" label="标题" />
-        <el-table-column property="category_name" label="分类" />
-        <el-table-column property="tag_name" label="标签" />
+        <el-table-column property="articleTitle" label="标题" />
+        <el-table-column property="categoryName" label="分类" />
+        <el-table-column property="tagName" label="标签" />
         <el-table-column property="status" label="发布状态">
           <template slot-scope="scope">
             {{ scope.row.status ? '已发布' : '未发布' }}
           </template>
         </el-table-column>
-        <el-table-column property="update_time" label="更新时间" />
+        <el-table-column property="updateTime" label="更新时间" />
       </el-table>
     </el-dialog>
     <!-- 分页 -->
@@ -43,19 +56,25 @@ export default {
   name: 'Tags',
   data() {
     return {
+      rules: {
+        tagName: [{ required: true, message: '请输入标签名称', trigger: 'blur' }],
+        tagDescription: [{ required: true, message: '请输入描述信息', trigger: 'blur' }]
+      },
       list: [],
       articleData: [],
       total: 0,
       loading: true,
       title: '',
-      form: { tag_name: '' },
+      form: {},
       alterVisible: false,
       searchVisible: false,
       articleLoading: false,
-      listQuery: { page: 1, tag_name: '' },
+      listQuery: { page: 1, tagName: '' },
       tableHeader: [
-        { field: 'tag_name', sortable: 'custom', title: '标签名' },
-        { field: 'update_time', title: '更新时间' },
+        { field: 'tagName', sortable: 'custom', title: '标签名' },
+        { field: 'tagAlias', sortable: 'custom', title: '别名' },
+        { field: 'tagDescription', sortable: 'custom', title: '描述' },
+        { field: 'createTime', title: '创建时间' },
         { field: 'toolbar', title: '操作' }
       ],
       toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
@@ -83,12 +102,17 @@ export default {
     handleEdit(data) {
       this.title = '编辑标签';
       this.alterVisible = true;
-      this.form = { tag_name: data.tag_name, id: data.id };
+      this.form = {
+        tagName: data.tagName,
+        tagAlias: data.tagAlias,
+        tagDescription: data.tagDescription,
+        id: data.id
+      };
     },
     handleShow(data) {
       this.searchVisible = true;
       this.articleLoading = true;
-      belong({ tag_name: data.tag_name }).then(res => {
+      belong({ tagId: data.id }).then(res => {
         this.articleLoading = false;
         this.articleData = res;
         this.alterVisible = false;
@@ -97,7 +121,7 @@ export default {
       });
     },
     ok() {
-      if (!this.form.tag_name) {
+      if (!this.form.tagName || !this.form.tagDescription) {
         return;
       }
       this.form.id ? edit(this.form).then(res => {
@@ -110,7 +134,7 @@ export default {
     },
     add() {
       this.alterVisible = true;
-      this.form = { tag_name: '' };
+      this.form = { tagName: '', tagAlias: '', tagDescription: '' };
       this.title = '新增标签';
     },
     handleDel(data) {

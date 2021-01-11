@@ -2,31 +2,31 @@
   <div class="write">
     <el-form ref="form" :inline="true" :model="form" label-width="120px" :rules="rules" size="medium">
       <el-form-item label="标题" prop="article_title">
-        <el-input v-model.trim="form.article_title" style="width: 400px;" clearable />
+        <el-input v-model.trim="form.articleTitle" style="width: 400px;" clearable />
       </el-form-item>
       <el-form-item label="分类" prop="category_name">
-        <el-select v-model="form.category_name" placeholder="请选择分类" style="width: 100%" clearable>
+        <el-select v-model="form.categoryId" placeholder="请选择分类" style="width: 100%" clearable>
           <el-option
             v-for="(item,k) in category"
             :key="k"
-            :label="item.category_name"
-            :value="item.category_name"
+            :label="item.categoryName"
+            :value="item.categoryId"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="标签" prop="tag_name">
-        <el-select v-model="form.tag_name" multiple placeholder="请选择标签" style="width: 400px;" clearable>
+      <el-form-item label="标签" prop="tagName">
+        <el-select v-model="form.tagId" multiple placeholder="请选择标签" style="width: 400px;" clearable>
           <el-option
             v-for="(item,k) in tags"
             :key="k"
-            :label="item.tag_name"
-            :value="item.tag_name"
+            :label="item.tagName"
+            :value="item.tagId"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="概述" prop="article_des">
         <el-input
-          v-model.trim="form.article_des"
+          v-model.trim="form.articleDes"
           :rows="4"
           type="textarea"
           maxlength="150"
@@ -68,7 +68,7 @@
         <el-button type="primary" size="medium " icon="el-icon-edit" @click="onSubmit(0)">保存草稿</el-button>
       </el-form-item>
     </el-form>
-    <Markdown ref="markdown" :content="form.content" />
+    <Markdown ref="markdown" :content="form.articleContent" />
   </div>
 </template>
 
@@ -87,11 +87,11 @@ export default {
       category: [],
       urlType: 1,
       form: {
-        content: '',
-        article_title: '',
-        article_des: '',
-        category_name: '',
-        tag_name: [],
+        articleContent: '',
+        articleTitle: '',
+        articleDes: '',
+        categoryId: '',
+        tagId: [],
         keywords: '',
         cover: '',
         tic: 1
@@ -106,13 +106,13 @@ export default {
       this.form.cover = url;
     },
     getMarkdown(content) {
-      this.form.content = content;
+      this.form.articleContent = content;
     },
     onSubmit(status) {
       this.form.status = status;
-      this.form.content = this.$refs.markdown.getMarkdown();
+      this.form.articleContent = this.$refs.markdown.getMarkdown();
       const param = { ...this.form };
-      param.tag_name = param.tag_name.join(',');
+      param.tagId = param.tagId.join(',');
       if (this.form.id) {
         edit(param).then(() => {
           this.form = this.$options.data().form;
@@ -130,8 +130,8 @@ export default {
         return;
       }
       detail({ id }).then(res => {
-        const buffer = new Buffer(res.content);
-        res.content = buffer.toString();
+        const buffer = new Buffer(res.articleContent);
+        res.articleContent = buffer.toString();
         this.form = res;
       });
     },

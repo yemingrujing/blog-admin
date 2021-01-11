@@ -17,5 +17,5 @@ export function del(data) {
 }
 
 export function belong(data) {
-  return Request.post('/tags/belong', data);
+  return Request.post('/api/tag/belong', data);
 }

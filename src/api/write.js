@@ -1,11 +1,11 @@
 import Request from '@/utils/request';
 
 export function tags() {
-  return Request.post('/article/tags');
+  return Request.post('/api/tag/artSearch');
 }
 
 export function category(data) {
-  return Request.post('/article/category', data);
+  return Request.post('/api/category/artSearch', data);
 }
 
 export function detail(data) {

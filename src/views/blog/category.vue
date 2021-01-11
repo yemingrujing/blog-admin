@@ -14,7 +14,7 @@
       :list-loading="loading"
       @emitEvent="(args)=>this.$emitEvent(args)"
     />
-    <el-dialog :title="title" :visible.sync="alterVisible">
+    <el-dialog :title="title" :visible.sync="alterVisible" width="300px">
       <el-form ref="role" :model="form" label-width="80px" label-position="left" :rules="rules">
         <el-form-item label="分类名称" prop="categoryName">
           <el-input v-model.trim="form.categoryName" placeholder="请输入分类名称" />
@@ -23,7 +23,7 @@
           <el-input v-model.trim="form.categoryAlias" placeholder="请输入别名" />
         </el-form-item>
         <el-form-item label="描述" prop="categoryDescription">
-          <el-input v-model.trim="form.categoryDescription" placeholder="请输入描述" />
+          <el-input v-model.trim="form.categoryDescription" placeholder="请输入描述信息" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -32,15 +32,15 @@
     </el-dialog>
     <el-dialog title="所属文章" :visible.sync="searchVisible">
       <el-table v-loading="articleLoading" :data="articleData">
-        <el-table-column property="article_title" label="标题" />
-        <el-table-column property="category_name" label="分类" />
-        <el-table-column property="tag_name" label="标签" />
+        <el-table-column property="articleTitle" label="标题" />
+        <el-table-column property="categoryName" label="分类" />
+        <el-table-column property="tagName" label="标签" />
         <el-table-column property="status" label="发布状态">
           <template slot-scope="scope">
             {{ scope.row.status ? '已发布' : '未发布' }}
           </template>
         </el-table-column>
-        <el-table-column property="update_time" label="更新时间" />
+        <el-table-column property="updateTime" label="更新时间" />
       </el-table>
     </el-dialog>
     <!-- 分页 -->
@@ -57,8 +57,7 @@
       return {
         rules: {
           categoryName: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
-          categoryAlias: [{ required: true, message: '请输入别名', trigger: 'blur' }],
-          categoryDescription: [{ required: true, message: '请输入描述', trigger: 'blur' }]
+          categoryDescription: [{ required: true, message: '请输入描述信息', trigger: 'blur' }]
         },
         list: [],
         articleData: [],
@@ -74,7 +73,7 @@
           { field: 'categoryName', sortable: 'custom', title: '分类名称' },
           { field: 'categoryAlias', sortable: 'custom', title: '别名' },
           { field: 'categoryDescription', sortable: 'custom', title: '描述' },
-          { field: 'createTime', title: '更新时间' },
+          { field: 'createTime', title: '创建时间' },
           { field: 'toolbar', title: '操作' }
         ],
         toolbarList: [{ title: '编辑', field: 'handleEdit', type: 'primary' }, {
@@ -113,9 +112,7 @@
         this.searchVisible = true;
         this.articleLoading = true;
         belong({
-          categoryName: data.categoryName,
-          categoryAlias: data.categoryAlias,
-          categoryDescription: data.categoryDescription
+          categoryId: data.id
         }).then(res => {
           this.articleLoading = false;
           this.articleData = res;
@@ -125,7 +122,7 @@
         });
       },
       ok() {
-        if (!this.form.category_name) {
+        if (!this.form.categoryName || !this.form.categoryDescription) {
           return;
         }
         this.form.id ? edit(this.form).then(res => {
