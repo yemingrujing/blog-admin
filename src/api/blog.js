@@ -5,13 +5,9 @@ export function list(data) {
 }
 
 export function del(data) {
-  return Request.post('/article/del', data);
+  return Request.post('/api/articles/del', data);
 }
 
-export function tags(data) {
-  return Request.post('/tags/list', data);
-}
-
-export function category(data) {
-  return Request.post('/article/category', data);
+export function publish(data) {
+  return Request.post('/api/articles/publish', data);
 }

@@ -28,8 +28,7 @@
 </template>
 
 <script>
-import { list, del } from '@/api/blog';
-import { edit } from '@/api/write';
+import { list, del, publish } from '@/api/blog';
 import { add } from '@/api/comment';
 
 export default {
@@ -109,7 +108,7 @@ export default {
     },
     handleStatus(data) {
       this.loading = true;
-      edit({ id: data.id, status: data.status }).then(() => {
+      publish({ id: data.id, status: data.status }).then(() => {
         this.loading = false;
       }).catch(() => {
         this.search();

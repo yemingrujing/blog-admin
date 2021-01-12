@@ -17,5 +17,5 @@ export function add(data) {
 }
 
 export function edit(data) {
-  return Request.post('/article/edit', data);
+  return Request.post('/api/articles/edit', data);
 }
