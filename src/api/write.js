@@ -9,7 +9,7 @@ export function category(data) {
 }
 
 export function detail(data) {
-  return Request.post('/article/detail', data);
+  return Request.post('/api/articles/detail', data);
 }
 
 export function add(data) {
