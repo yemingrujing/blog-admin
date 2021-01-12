@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 表格查询条件 -->
     <div class="filter-container">
-      <el-input v-model.trim="listQuery.article_name" placeholder="文章名称" style="width: 200px;" clearable />
+      <el-input v-model.trim="listQuery.articleTitle" placeholder="文章名称" style="width: 200px;" clearable />
       <el-button type="primary" class="filter-item" @click="search">查询</el-button>
     </div>
     <!-- 表格区域 -->
@@ -38,19 +38,19 @@ export default {
       articleData: [],
       total: 0,
       loading: true,
-      form: { comment: '' },
+      form: { commentContent: '' },
       alterVisible: false,
-      listQuery: { page: 1, article_name: '' },
+      listQuery: { page: 1, articleTitle: '' },
       tableHeader: [
-        { field: 'article_name', sortable: 'custom', title: '文章' },
-        { field: 'comment', sortable: 'custom', title: '评论' },
-        { field: 'nick_name', sortable: 'custom', title: '昵称' },
+        { field: 'articleTitle', sortable: 'custom', title: '文章' },
+        { field: 'commentContent', sortable: 'custom', title: '评论' },
+        { field: 'nickName', sortable: 'custom', title: '昵称' },
         { field: 'email', sortable: 'custom', title: '邮箱' },
         { field: 'author', sortable: 'custom', title: '类型', formatter: 'author' },
         { field: 'status', title: '状态', switch: 'handleStatus', inactive: 0, active: 1 },
-        { field: 'create_time', title: '创建时间' },
-        { field: 'browser_name', title: '设备' },
-        { field: 'system_name', title: '操作系统' },
+        { field: 'commentDate', title: '评论时间' },
+        { field: 'browserName', title: '设备' },
+        { field: 'systemName', title: '操作系统' },
         { field: 'toolbar', title: '操作' }
       ],
       toolbarList: [{ title: '回复', field: 'handleReplay', type: 'primary' }, {
@@ -79,10 +79,10 @@ export default {
       });
     },
     handleReplay(data) {
-      this.form.parent_id = data.parent_id === -1 ? data.id : data.parent_id;
-      this.form.article_name = data.article_name;
-      this.form.article_id = data.article_id;
-      this.form.parent_name = data.parent_name;
+      this.form.parentId = data.parentId === -1 ? data.id : data.parentId;
+      this.form.articleTitle = data.articleTitle;
+      this.form.articleId = data.articleId;
+      this.form.parentNickName = data.parentNickName;
       this.form.status = 1;
       this.form.author = 1;
       this.alterVisible = true;
@@ -96,7 +96,7 @@ export default {
       });
     },
     ok() {
-      if (!this.form.comment) {
+      if (!this.form.commentContent) {
         return;
       }
       add(this.form).then(() => {

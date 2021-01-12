@@ -73,7 +73,7 @@ export default {
       tableHeader: [
         { field: 'tagName', sortable: 'custom', title: '标签名' },
         { field: 'tagAlias', sortable: 'custom', title: '别名' },
-        { field: 'tagDescription', sortable: 'custom', title: '描述' },
+        { field: 'tagDescription', sortable: 'custom', title: '描述', tooltip: true },
         { field: 'createTime', title: '创建时间' },
         { field: 'toolbar', title: '操作' }
       ],

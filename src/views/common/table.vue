@@ -33,6 +33,7 @@
       highlight-current-row
       style="width: 100%;"
       :size="size"
+      tooltip-effect="dark"
       @sort-change="sortChange"
     >
       <el-table-column
