@@ -46,7 +46,7 @@ export default {
       listQuery: { page: 1, articleTitle: '' },
       tableHeader: [
         { field: 'articleTitle', sortable: 'custom', title: '文章' },
-        { field: 'commentContent', sortable: 'custom', title: '评论' },
+        { field: 'commentContent', sortable: 'custom', title: '评论', tooltip: true },
         { field: 'nickName', sortable: 'custom', title: '昵称' },
         { field: 'email', sortable: 'custom', title: '邮箱' },
         { field: 'author', sortable: 'custom', title: '类型', formatter: 'author' },

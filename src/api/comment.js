@@ -13,5 +13,5 @@ export function status(data) {
 }
 
 export function del(data) {
-  return Request.post('/comment/del', data);
+  return Request.post('/api/comments/del', data);
 }
