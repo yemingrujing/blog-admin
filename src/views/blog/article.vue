@@ -16,11 +16,14 @@
     />
     <el-dialog :close-on-click-modal="false" title="添加置顶评论" :visible.sync="alterVisible" width="400px">
       <el-input
-        v-model.trim="form.comment"
+        v-model.trim="form.commentContent"
         type="textarea"
         :rows="4"
       />
-      <span slot="footer" class="dialog-footer"><el-button type="primary" @click="ok()">确 定</el-button></span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="alterVisible = false">取 消</el-button>
+        <el-button type="primary" @click="ok()">确 定</el-button>
+      </span>
     </el-dialog>
     <!-- 分页 -->
     <nice-pagination :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="search" />
@@ -57,7 +60,7 @@ export default {
       total: 0,
       tableControl: true,
       alterVisible: false,
-      form: { comment: '' }
+      form: { commentContent: '' }
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -93,13 +96,13 @@ export default {
     handleComment(item) {
       this.form.articleId = item.id;
       this.form.articleName = item.articleTitle;
-      this.form.comment = '';
+      this.form.commentContent = '';
       this.form.author = 1;
       this.form.status = 1;
       this.alterVisible = true;
     },
     ok() {
-      if (!this.form.comment) {
+      if (!this.form.commentContent) {
         this.$message.error('内容不能为空');
       }
       add(this.form).then(() => {

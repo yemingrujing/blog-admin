@@ -32,7 +32,13 @@
       </span>
     </el-dialog>
     <el-dialog title="所属文章" :visible.sync="searchVisible">
-      <el-table v-loading="articleLoading" :data="articleData">
+      <el-table
+        v-loading="articleLoading"
+        :data="articleData"
+        :header-cell-style="{'text-align':'center'}"
+        :cell-style="{'text-align':'center'}"
+        style="width: 100%"
+      >
         <el-table-column property="articleTitle" label="标题" />
         <el-table-column property="categoryName" label="分类" />
         <el-table-column property="tagName" label="标签" />

@@ -16,11 +16,14 @@
     />
     <el-dialog title="回复评论" :visible.sync="alterVisible" width="400px">
       <el-input
-        v-model.trim="form.comment"
+        v-model.trim="form.commentContent"
         type="textarea"
         :rows="4"
       />
-      <span slot="footer" class="dialog-footer"><el-button type="primary" @click="ok()">确 定</el-button></span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="alterVisible = false">取 消</el-button>
+        <el-button type="primary" @click="ok()">确 定</el-button>
+      </span>
     </el-dialog>
     <!-- 分页 -->
     <nice-pagination :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="search" />
@@ -79,10 +82,9 @@ export default {
       });
     },
     handleReplay(data) {
-      this.form.parentId = data.parentId === -1 ? data.id : data.parentId;
+      this.form.parentId = !data.parentId ? data.id : data.parentId;
       this.form.articleTitle = data.articleTitle;
       this.form.articleId = data.articleId;
-      this.form.parentNickName = data.parentNickName;
       this.form.status = 1;
       this.form.author = 1;
       this.alterVisible = true;
@@ -97,6 +99,7 @@ export default {
     },
     ok() {
       if (!this.form.commentContent) {
+        this.$message.error('评论内容不能为空');
         return;
       }
       add(this.form).then(() => {
