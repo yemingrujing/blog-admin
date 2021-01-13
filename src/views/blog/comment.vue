@@ -14,8 +14,9 @@
       :list-loading="loading"
       @emitEvent="(args)=>this.$emitEvent(args)"
     />
-    <el-dialog title="回复评论" :visible.sync="alterVisible" width="400px">
+    <el-dialog title="回复评论" :visible.sync="alterVisible" width="400px" @close="onClose">
       <el-input
+        ref="commentContent"
         v-model.trim="form.commentContent"
         type="textarea"
         :rows="4"
@@ -122,6 +123,9 @@ export default {
       }).catch(() => {
         this.loading = false;
       });
+    },
+    onClose() {
+      this.$refs.commentContent.clear();
     }
   }
 };
