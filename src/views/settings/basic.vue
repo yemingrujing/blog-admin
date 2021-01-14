@@ -13,14 +13,14 @@
     />
     <el-dialog :title="title" :visible.sync="dialogVisible" width="600px">
       <el-form ref="form" :model="form" label-width="100px" size="mini">
-        <el-form-item label="名称" prop="setting_title">
-          <el-input v-model.trim="form.setting_title" />
+        <el-form-item label="名称" prop="configTitle">
+          <el-input v-model.trim="form.configTitle" />
         </el-form-item>
-        <el-form-item label="标识" prop="setting_key">
-          <el-input v-model.trim="form.setting_key" placeholder="长度4至8位，以字母开头，字母，数字，减号，下划线" />
+        <el-form-item label="标识" prop="signKey">
+          <el-input v-model.trim="form.signKey" placeholder="长度4至8位，以字母开头，字母，数字，减号，下划线" />
         </el-form-item>
-        <el-form-item label="内容" prop="setting_content">
-          <el-input v-model.trim="form.setting_content" />
+        <el-form-item label="内容" prop="configContent">
+          <el-input v-model.trim="form.configContent" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model.trim="form.remark" />
@@ -45,9 +45,9 @@ export default {
       dialogVisible: false,
       reqLoading: false,
       tableHeader: [
-        { field: 'setting_title', sortable: 'custom', title: '标题' },
-        { field: 'setting_key', sortable: 'custom', title: '标识' },
-        { field: 'setting_content', sortable: 'custom', title: '内容' },
+        { field: 'configTitle', sortable: 'custom', title: '标题' },
+        { field: 'signKey', sortable: 'custom', title: '标识' },
+        { field: 'configContent', sortable: 'custom', title: '内容' },
         { field: 'remark', title: '备注' },
         { field: 'toolbar', title: '操作' }
       ],
@@ -55,7 +55,7 @@ export default {
       total: 0,
       title: '',
       alterVisible: false,
-      form: { setting_title: '', setting_key: '', setting_content: '', remark: '' }
+      form: { configTitle: '', signKey: '', configContent: '', remark: '' }
     };
   },
   created() {
