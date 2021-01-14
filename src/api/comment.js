@@ -9,7 +9,7 @@ export function add(data) {
 }
 
 export function status(data) {
-  return Request.post('/comment/edit', data);
+  return Request.post('/api/comment/publish', data);
 }
 
 export function del(data) {
