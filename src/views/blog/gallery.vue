@@ -24,7 +24,7 @@
         </el-form-item>
         <el-form-item label="日期">
           <el-date-picker
-            v-model="form.origin_time"
+            v-model="form.originTime"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="请选择"
@@ -36,9 +36,9 @@
             <el-radio :label="0">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="描述" prop="des">
+        <el-form-item label="描述" prop="describe">
           <el-input
-            v-model.trim="form.des"
+            v-model.trim="form.describe"
             type="textarea"
             :rows="4"
           />
@@ -58,7 +58,7 @@
 
 <script>
 import ImgUpLoad from '@/views/common/imgUpload';
-import { list, edit, del, add } from '@/api/gallery';
+import { list, edit, publish, del, add } from '@/api/gallery';
 
 export default {
   name: 'Gallery',
@@ -67,7 +67,7 @@ export default {
     return {
       rules: {
         title: [{ required: true, trigger: 'blur', message: '请输入标题' }],
-        des: [{ required: true, message: '请输入描述', trigger: 'blur' }]
+        describe: [{ required: true, message: '请输入描述', trigger: 'blur' }]
       },
       list: [],
       title: '',
@@ -75,16 +75,16 @@ export default {
       total: 0,
       loading: true,
       reqLoading: false,
-      form: { title: '', des: '', origin_time: '', url: '', status: 1, remark: '' },
+      form: { title: '', describe: '', originTime: '', url: '', status: 1, remark: '' },
       alterVisible: false,
       listQuery: { page: 1, title: '' },
       tableHeader: [
         { field: 'title', sortable: 'custom', title: '标题' },
-        { field: 'des', sortable: 'custom', title: '描述' },
-        { field: 'origin_time', sortable: 'custom', title: '时间' },
+        { field: 'describe', sortable: 'custom', title: '描述' },
+        { field: 'originTime', sortable: 'custom', title: '时间' },
         { field: 'url', sortable: 'custom', title: '预览', img: 'url' },
         { field: 'status', title: '状态', switch: 'handleStatus', inactive: 0, active: 1 },
-        { field: 'update_time', title: '更新时间' },
+        { field: 'updateTime', title: '更新时间' },
         { field: 'remark', title: '备注' },
         { field: 'toolbar', title: '操作' }
       ],
@@ -137,7 +137,7 @@ export default {
     },
     addReq() {
       add(this.form).then(() => {
-        this.form.des = '';
+        this.form.describe = '';
         this.form.url = '';
         this.form.remark = '';
       });
@@ -154,7 +154,7 @@ export default {
     },
     handleStatus(data) {
       this.loading = true;
-      edit({ id: data.id, status: data.status }).then(() => {
+      publish({ id: data.id, status: data.status }).then(() => {
         this.loading = false;
       }).catch(() => {
         this.search();

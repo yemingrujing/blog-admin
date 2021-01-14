@@ -1,15 +1,19 @@
 import Request from '@/utils/request';
 
 export function search(data) {
-  return Request.post('/images/search', data);
+  return Request.post('/api/images/search', data);
 }
 
 export function add(data) {
-  return Request.post('/images/add', data);
+  return Request.post('/api/images/add', data);
+}
+
+export function publish(data) {
+  return Request.post('/api/images/switch', data);
 }
 
 export function del(data) {
-  return Request.post('/images/del', data);
+  return Request.post('/api/images/del', data);
 }
 
 export function upload(data) {

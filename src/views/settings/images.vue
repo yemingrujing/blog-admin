@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 表格查询条件 -->
     <div class="filter-container">
-      <el-input v-model.trim="listQuery.image_title" placeholder="图片名称" style="width: 200px;" clearable />
+      <el-input v-model.trim="listQuery.imageTitle" placeholder="图片名称" style="width: 200px;" clearable />
       <el-button type="primary" class="filter-item" @click="search">查询</el-button>
       <el-button type="primary" class="filter-item" @click="add">添加</el-button>
     </div>
@@ -15,8 +15,8 @@
     />
     <el-dialog title="添加图片" :visible.sync="alterVisible" width="20%">
       <el-form ref="form" :model="form" label-width="100px" size="mini">
-        <el-form-item label="图片名称" prop="image_title">
-          <el-input v-model.trim="form.image_title" clearable />
+        <el-form-item label="图片名称" prop="imageTitle">
+          <el-input v-model.trim="form.imageTitle" clearable />
         </el-form-item>
         <el-form-item label="上传路径" prop="path">
           <el-select ref="role" v-model="path" placeholder="选择上传路径" clearable class="filter-item">
@@ -27,7 +27,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="图片" prop="avatar">
-          <ImgUpLoad :img="form.image_url" :title="form.image_title" :path="path" @setImg="setIcon" />
+          <ImgUpLoad :img="form.imageUrl" :title="form.imageTitle" :path="path" @setImg="setIcon" />
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -53,13 +53,13 @@ export default {
       loading: true,
       alterVisible: false,
       path: '/blog/common/',
-      form: { image_url: '', image_title: '' },
-      listQuery: { page: 1, image_title: '', limit: 10 },
+      form: { imageUrl: '', imageTitle: '' },
+      listQuery: { page: 1, imageTitle: '', limit: 10 },
       tableHeader: [
-        { field: 'image_title', sortable: 'custom', title: '名称' },
-        { field: 'image_url', title: '预览', img: 'image_url' },
-        { field: 'image_url', title: '图片地址', tooltip: true },
-        { field: 'create_time', title: '创建时间' },
+        { field: 'imageTitle', sortable: 'custom', title: '名称' },
+        { field: 'imageUrl', title: '预览', img: 'imageUrl' },
+        { field: 'imageUrl', title: '图片地址', tooltip: true },
+        { field: 'createTime', title: '创建时间' },
         { field: 'toolbar', title: '操作' }
       ],
       toolbarList: [{ title: '删除', field: 'handleDel', type: 'danger' }]
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     setIcon(url) {
-      this.form.image_url = url;
+      this.form.imageUrl = url;
       copy(url);
       this.alterVisible = false;
     },
@@ -92,7 +92,7 @@ export default {
     },
     add() {
       this.alterVisible = true;
-      this.form = { image_title: '', image_url: '' };
+      this.form = { imageTitle: '', imageUrl: '' };
     },
     handleDel(data) {
       this.$confirm('此操作将永久删除该图片, 是否继续?', '提示', {
