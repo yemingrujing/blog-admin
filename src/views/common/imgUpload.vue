@@ -92,7 +92,7 @@ export default {
       this.loading = true;
       const params = new FormData();
       params.append('file', blob || file, file.name);
-      params.append('image_title', this.title);
+      params.append('imageTitle', this.title);
       params.append('path', this.path);
       params.append('storage', this.storage);
       upload(params).then(res => {
