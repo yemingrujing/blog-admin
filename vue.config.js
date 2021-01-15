@@ -31,7 +31,7 @@ module.exports = {
         }
       },
       '/image-base-url': {
-        target: 'https://raw.githubusercontent.com/yemingrujing/Drawing_Images/main',
+        target: 'https://raw.githubusercontent.com/yemingrujing/Drawing_Images/main/',
         changeOrigin: true,
         pathRewrite: {
           '^/image-base-url': ''
