@@ -23,3 +23,11 @@ export function del(data) {
 export function getRoles(data) {
   return Request.post('/api/users/roles', data);
 }
+
+export function setAvator(data) {
+  return Request.post('/api/users/set_avator', data);
+}
+
+export function changePassword(data) {
+  return Request.post('/api/users/change_pwd', data);
+}

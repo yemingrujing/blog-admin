@@ -24,14 +24,18 @@
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar" class="user-avatar">
+          <span style="margin-left: 5px; float: right; color: #606266; font-size: 14px;">{{ nickName }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/">
-            <el-dropdown-item>首页</el-dropdown-item>
-          </router-link>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">注销登录</span>
+          <el-dropdown-item icon="el-icon-s-home" @click.native="toHome">
+            <span>首页</span>
+          </el-dropdown-item>
+          <el-dropdown-item icon="el-icon-s-custom" @click.native="toPerson">
+            <span>个人信息</span>
+          </el-dropdown-item>
+          <el-dropdown-item icon="el-icon-table-lamp" divided @click.native="logout">
+            <span>注销登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -59,7 +63,8 @@ export default {
     ...mapGetters([
       'sidebar',
       'avatar',
-      'device'
+      'device',
+      'nickName'
     ])
   },
   methods: {
@@ -69,6 +74,12 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout');
       this.$router.push(`/login`);
+    },
+    toHome() {
+      this.$router.push({ name: 'Home' });
+    },
+    toPerson() {
+      this.$router.push({ name: 'Person' });
     }
   }
 };
@@ -79,7 +90,7 @@ export default {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #47e081;
+  background: #ddd;
   box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
   .hamburger-container {
@@ -143,6 +154,7 @@ export default {
           width: 40px;
           height: 40px;
           border-radius: 10px;
+          margin-top: 2px;
         }
 
         .el-icon-caret-bottom {

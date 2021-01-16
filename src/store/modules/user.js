@@ -7,10 +7,13 @@ import { Message } from 'element-ui';
 import defaultSettings from '@/settings';
 
 const state = {
-  name: '',
+  userName: '',
   avatar: '',
   theme: defaultSettings.theme,
   id: '',
+  nickName: '',
+  email: '',
+  remark: '',
   roles: []
 };
 
@@ -18,8 +21,8 @@ const mutations = {
   SET_ID: (state, id) => {
     state.id = id;
   },
-  SET_NAME: (state, name) => {
-    state.name = name;
+  SET_NAME: (state, userName) => {
+    state.userName = userName;
   },
   SET_THEME: (state, theme) => {
     state.theme = theme;
@@ -29,6 +32,15 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles;
+  },
+  SET_NICKNAME: (state, nickName) => {
+    state.nickName = nickName;
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email;
+  },
+  SET_REMARK: (state, remark) => {
+    state.remark = remark;
   }
 };
 
@@ -44,12 +56,15 @@ const actions = {
     const { username, password, captcha } = userInfo;
     return new Promise((resolve, reject) => {
       login({ username, password: md5(password), captcha }).then(response => {
-        const { avatar, id, account, theme, token } = response;
+        const { avatar, id, userName, theme, token, nickName, userEmail, remark } = response;
         setToken(token);
         commit('SET_ID', id);
-        commit('SET_NAME', account);
+        commit('SET_NAME', userName);
         commit('SET_AVATAR', avatar);
         commit('SET_THEME', theme);
+        commit('SET_NICKNAME', nickName);
+        commit('SET_EMAIL', userEmail);
+        commit('SET_REMARK', remark);
         resolve(response);
       }).catch(error => {
         reject(error);
@@ -98,6 +113,9 @@ const actions = {
     commit('SET_ROLES', []);
     commit('SET_NAME', '');
     commit('SET_AVATAR', '');
+    commit('SET_NICKNAME', '');
+    commit('SET_EMAIL', '');
+    commit('SET_REMARK', '');
     sessionStorage.clear();
   },
   logout({ commit, state, dispatch }) {

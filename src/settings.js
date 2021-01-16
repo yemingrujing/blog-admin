@@ -4,7 +4,7 @@ module.exports = {
     name: '/admin',
     url: 'http://127.0.0.1:7001'
   },
-  port: 5000,
+  port: 8081,
   showSettings: true,
   tagsView: true,
   theme: '#304156',

@@ -191,7 +191,7 @@
   // the scroll bar appears when the subMenu is too long
   >.el-menu--popup {
     max-height: 100vh;
-    overflow-y: auto;
+    overflow-y: hidden;
 
     &::-webkit-scrollbar-track-piece {
       background: #d3dce6;

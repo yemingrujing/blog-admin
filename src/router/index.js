@@ -114,6 +114,16 @@ export const asyncRoutes = [
           title: 'Roles',
           key: 'role'
         }
+      },
+      {
+        path: 'person',
+        name: 'Person',
+        component: () => import('@/views/person/index'),
+        hidden: true,
+        meta: {
+          title: 'Person',
+          key: 'person'
+        }
       }
     ]
   },

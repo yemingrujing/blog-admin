@@ -12,7 +12,9 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+  runtimeCompiler: true,
   devServer: {
+    host: '0.0.0.0',
     port: defaultSettings.port,
     open: false,
     overlay: {

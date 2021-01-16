@@ -19,3 +19,11 @@ export function getInfo() {
 export function logout() {
   return Request.post('/api/user/logout');
 }
+
+export function setAvator(data) {
+  return Request.post('/api/user/setAvator', data);
+}
+
+export function changePassword(data) {
+  return Request.post('/api/user/changePassword', data);
+}

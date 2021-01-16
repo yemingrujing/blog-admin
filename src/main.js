@@ -7,7 +7,6 @@ import preventReClick from '@/utils/noDbClick';
 
 import './styles/element-variables.scss';
 import 'normalize.css/normalize.css';
-import './styles/element-variables.scss';
 
 import '@/styles/index.scss'; // 全局css
 
