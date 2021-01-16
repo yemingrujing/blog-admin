@@ -1,18 +1,18 @@
 import Request from '@/utils/request';
 
 export function search() {
-  return Request.post('/dashboard/search');
+  return Request.post('/api/report/search');
 }
 
 export function searchItem(data) {
-  return Request.post('/dashboard/item', data);
+  return Request.post('/api/report/item', data);
 }
 
 export function searchBlog() {
-  return Request.get('/dashboard/category');
+  return Request.get('/api/report/category');
 }
 
 export function searchCity() {
-  return Request.get('/dashboard/city');
+  return Request.get('/api/report/city');
 }
 
