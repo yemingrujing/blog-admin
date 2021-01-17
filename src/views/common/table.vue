@@ -76,6 +76,7 @@
               <el-image
                 class="imgIcon"
                 :src="row[k.img]"
+                :height="k.height"
                 :preview-src-list="[row[k.img]]"
               />
             </template>

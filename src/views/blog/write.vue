@@ -36,11 +36,29 @@
         />
       </el-form-item>
       <el-form-item label="封面" prop="cover">
-        <el-radio v-model="urlType" :label="0">手动输入</el-radio>
-        <el-radio v-model="urlType" :label="1">上传</el-radio>
-        <br>
-        <ImgUpLoad v-if="urlType" :img="form.cover" :title="form.articleTitle" path="/blog/article/" @setImg="setImg" />
-        <el-input v-else v-model.trim="form.cover" style="width: 200px;" clearable placeholder="图片路径..." />
+        <!--        <el-radio v-model="urlType" :label="0">手动输入</el-radio>-->
+        <!--        <el-radio v-model="urlType" :label="1">上传</el-radio>-->
+        <!--        <br>-->
+        <!--        <ImgUpLoad v-if="urlType" :img="form.cover" :title="form.articleTitle" path="/blog/article/" @setImg="setImg" />-->
+        <!--        <el-input v-else v-model.trim="form.cover" style="width: 200px;" clearable placeholder="图片路径..." />-->
+
+        <div
+          v-if="form.cover"
+          class="user-headpic-update"
+          :style="{ 'background-image': 'url(' + form.cover + ')','background-repeat':'no-repeat','background-size':'cover', 'background-position':'center',}"
+        >
+          <span class="update" @click="openChooseImg">
+            <i class="el-icon-edit" />
+            重新上传</span>
+        </div>
+        <ImgUpLoad
+          v-else
+          :img="form.cover"
+          :title="form.articleTitle"
+          path="/blog/article/"
+          style="width: 200px;"
+          @setImg="setImg"
+        />
       </el-form-item>
       <el-form-item label="关键字" prop="keywords">
         <el-input
@@ -68,6 +86,7 @@
         <el-button type="primary" size="medium " icon="el-icon-edit" @click="onSubmit(0)">保存草稿</el-button>
       </el-form-item>
     </el-form>
+    <ChooseImg ref="chooseImg" @enter-img="setImg" />
     <Markdown ref="markdown" :content="form.articleContent" />
   </div>
 </template>
@@ -76,10 +95,15 @@
 import Markdown from '@/components/Markdown/';
 import { tags, category, detail, add, edit } from '@/api/write';
 import ImgUpLoad from '@/views/common/imgUpload';
+import ChooseImg from "@/components/chooseImg";
 
 export default {
   name: 'Write',
-  components: { Markdown, ImgUpLoad },
+  components: {
+    Markdown,
+    ImgUpLoad,
+    ChooseImg
+  },
   data() {
     return {
       tags: [],
@@ -141,6 +165,9 @@ export default {
       tags().then(res => {
         this.tags = res;
       });
+    },
+    openChooseImg() {
+      this.$refs.chooseImg.open();
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -151,9 +178,37 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+
 .write {
   padding-top: 10px;
+  background-color: #ffffff;
 }
 
+.user-headpic-update {
+  width: 200px;
+  height: 100px;
+  line-height: 120px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  border-radius: 20px;
+
+  &:hover {
+    color: #fff;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%), radial-gradient(at top center, rgba(255, 255, 255, 0.40) 0%, rgba(0, 0, 0, 0.40) 120%) #989898;
+    background-blend-mode: multiply, multiply;
+
+    .update {
+      color: #fff;
+    }
+  }
+
+  .update {
+    width: 200px;
+    height: 100px;
+    text-align: center;
+    color: transparent;
+  }
+}
 </style>
 
