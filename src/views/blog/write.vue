@@ -1,10 +1,10 @@
 <template>
   <div class="write">
     <el-form ref="form" :inline="true" :model="form" label-width="120px" :rules="rules" size="medium">
-      <el-form-item label="标题" prop="article_title">
+      <el-form-item label="标题" prop="articleTitle">
         <el-input v-model.trim="form.articleTitle" style="width: 400px;" clearable />
       </el-form-item>
-      <el-form-item label="分类" prop="category_name">
+      <el-form-item label="分类" prop="categoryId">
         <el-select v-model="form.categoryId" placeholder="请选择分类" style="width: 100%" clearable>
           <el-option
             v-for="(item,k) in category"
@@ -24,7 +24,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="概述" prop="article_des">
+      <el-form-item label="概述" prop="articleDes">
         <el-input
           v-model.trim="form.articleDes"
           :rows="4"
@@ -39,7 +39,7 @@
         <el-radio v-model="urlType" :label="0">手动输入</el-radio>
         <el-radio v-model="urlType" :label="1">上传</el-radio>
         <br>
-        <ImgUpLoad v-if="urlType" :img="form.cover" :title="form.title" path="/blog/article/" @setImg="setImg" />
+        <ImgUpLoad v-if="urlType" :img="form.cover" :title="form.articleTitle" path="/blog/article/" @setImg="setImg" />
         <el-input v-else v-model.trim="form.cover" style="width: 200px;" clearable placeholder="图片路径..." />
       </el-form-item>
       <el-form-item label="关键字" prop="keywords">

@@ -9,10 +9,10 @@ export function searchItem(data) {
 }
 
 export function searchBlog() {
-  return Request.get('/api/report/category');
+  return Request.post('/api/report/category');
 }
 
 export function searchCity() {
-  return Request.get('/api/report/city');
+  return Request.post('/api/report/city');
 }
 

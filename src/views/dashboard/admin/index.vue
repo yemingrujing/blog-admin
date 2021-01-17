@@ -80,10 +80,10 @@ export default {
       this.cityVisitor = [];
       if (this.type) { // 城市分布
         this.city.forEach(k => {
-          if (k.n && !k.city_name.includes('省')) {
-            this.cityPosition[k.city_name] = [k.x, k.y];
+          if (k.n && !k.cityName.includes('省')) {
+            this.cityPosition[k.cityName] = [k.x, k.y];
             this.cityVisitor.push({
-              name: k.city_name,
+              name: k.cityName,
               value: k.n
             });
           }
@@ -91,10 +91,10 @@ export default {
       } else { // 省份分布
         const arr = ['北京市', '上海市', '天津市', '重庆市', '香港', '澳门'];
         this.city.forEach(k => {
-          if (k.city_name.includes('省') || arr.includes(k.city_name)) {
-            this.cityPosition[k.city_name] = [k.x, k.y];
+          if (k.cityName.includes('省') || arr.includes(k.cityName)) {
+            this.cityPosition[k.cityName] = [k.x, k.y];
             this.cityVisitor.push({
-              name: k.city_name,
+              name: k.cityName,
               value: k.n
             });
           }

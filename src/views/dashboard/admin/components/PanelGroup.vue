@@ -16,7 +16,7 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('comment')">
+      <div class="card-panel" @click="handleSetLineChartData('comments')">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
@@ -29,7 +29,7 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('article')">
+      <div class="card-panel" @click="handleSetLineChartData('articles')">
         <div class="card-panel-icon-wrapper icon-article-line">
           <svg-icon icon-class="article-line" class-name="card-panel-icon" />
         </div>

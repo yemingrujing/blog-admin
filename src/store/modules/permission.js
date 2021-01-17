@@ -59,11 +59,12 @@ function setRoute(routes, menu) {
       component: targetRoute.component,
       name: targetRoute.name,
       redirect: targetRoute.redirect,
+      hidden: !targetRoute.hidden ? false : (targetRoute.hidden === true),
       meta: { title: menu.title, icon: targetRoute.meta.icon, sort: menu.sort },
       children: menu.list
     };
     for (const key in menuInfo) {
-      if (!menuInfo[key]) {
+      if (!menuInfo[key] && key !== 'hidden') {
         delete menuInfo[key];
       }
     }
