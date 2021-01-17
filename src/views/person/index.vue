@@ -6,7 +6,7 @@
           <div class="user-card">
             <div
               class="user-headpic-update"
-              :style="{ 'background-image': 'url(' + avatar + ')','background-repeat':'no-repeat','background-size':'cover' }"
+              :style="{ 'background-image': 'url(' + avatar + ')','background-repeat':'no-repeat','background-size':'cover', 'background-position':'center' }"
             >
               <span class="update" @click="openChooseImg">
                 <i class="el-icon-edit" />
@@ -135,7 +135,7 @@ export default {
       this.$refs.modifyPwdForm.clearValidate();
     },
     openChooseImg() {
-      this.$refs.chooseImg.open();
+      this.$refs.chooseImg.open('/blog/avatar/');
     },
     async enterImg(url) {
       setAvator({ avatar: url, id: this.id }).then(res => {

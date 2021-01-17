@@ -39,8 +39,8 @@ export default {
       this.$emit("enter-img", url);
       this.drawer = false;
     },
-    async open() {
-      findImagesList().then(res => {
+    async open(imageDir) {
+      findImagesList({ imageDir: imageDir }).then(res => {
         this.picList = res;
         this.drawer = true;
       });

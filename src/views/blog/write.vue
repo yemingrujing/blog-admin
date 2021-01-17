@@ -54,7 +54,7 @@
           v-else
           :img="form.cover"
           :title="form.articleTitle"
-          path="/blog/article/"
+          path="/blog/cover/"
           style="width: 200px;"
           @setImg="setImg"
         />
@@ -166,7 +166,7 @@ export default {
       });
     },
     openChooseImg() {
-      this.$refs.chooseImg.open();
+      this.$refs.chooseImg.open('/blog/cover/');
     }
   },
   beforeRouteEnter(to, from, next) {

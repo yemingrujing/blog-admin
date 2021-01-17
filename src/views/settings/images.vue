@@ -24,6 +24,7 @@
             <el-option label="/blog/article/" value="/blog/article/" />
             <el-option label="/blog/cover/" value="/blog/cover/" />
             <el-option label="/blog/gallery/" value="/blog/gallery/" />
+            <el-option label="/blog/avatar/" value="/blog/avatar/" />
           </el-select>
         </el-form-item>
         <el-form-item label="图片" prop="avatar">

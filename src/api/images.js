@@ -16,8 +16,8 @@ export function del(data) {
   return Request.post('/api/images/del', data);
 }
 
-export function findImagesList() {
-  return Request.post('/api/images/findImagesList');
+export function findImagesList(data) {
+  return Request.post('/api/images/findImagesList', data);
 }
 
 export function upload(data) {
