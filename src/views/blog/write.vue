@@ -41,7 +41,6 @@
         <!--        <br>-->
         <!--        <ImgUpLoad v-if="urlType" :img="form.cover" :title="form.articleTitle" path="/blog/article/" @setImg="setImg" />-->
         <!--        <el-input v-else v-model.trim="form.cover" style="width: 200px;" clearable placeholder="图片路径..." />-->
-
         <div
           v-if="form.cover"
           class="user-headpic-update"
