@@ -38,7 +38,7 @@
               list-type="picture"
               :auto-upload="false"
               :on-change="onUploadChange"
-              :accept="'image/jpeg,image/gif,image/png,image/bmp,image/jpg'"
+              :accept="'image/jpeg,image/gif,image/png,image/bmp,image/jpg,image/x-icon'"
             >
               <i class="el-icon-upload" style="color:#409EFF" />
               <div class="el-upload__text text">
@@ -181,7 +181,7 @@ export default {
     },
     onUploadChange(file) {
       // 校验
-      const isIMAGE = /png|jpg|jpeg|bmp|gif/.test(file.raw.type);
+      const isIMAGE = /png|jpg|jpeg|bmp|gif|ico/.test(file.raw.type);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isIMAGE) {
         this.$message.error('图片格式错误,仅支持png、jpg、jpeg、bmp、gif');
