@@ -1,6 +1,11 @@
 'use strict';
 const path = require('path');
+const Webpack = require('webpack');
 const defaultSettings = require('./src/settings.js');
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+// 匹配此 {RegExp} 的资源
+const productionGzipExtensions = /\.(js|css|json|ttf)(\?.*)?$/i;
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -41,12 +46,43 @@ module.exports = {
       }
     }
   },
-  configureWebpack: {
-    name: defaultSettings.title,
-    resolve: {
-      alias: {
-        '@': resolve('src')
-      }
+  configureWebpack: (config) => {
+    if (process.env.NODE_ENV === 'production') {
+      // 为生产环境修改配置
+      config.mode = 'production';
+      const plugins = [
+        new CompressionWebpackPlugin({
+          filename: '[path][name].gz[query]',
+          algorithm: 'gzip',
+          test: productionGzipExtensions,
+          threshold: 0,
+          minRatio: 0.8
+        }),
+        new Webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      ];
+      // 将每个依赖包打包成单独的js文件
+      const optimization = {
+        minimize: true,
+        minimizer: [new TerserPlugin({
+          terserOptions: {
+            warnings: false,
+            compress: {
+              drop_console: true,
+              drop_debugger: false,
+              // 移除console
+              pure_funcs: ['console.log']
+            }
+          }
+        })]
+      };
+      Object.assign(config, {
+        plugins,
+        optimization
+      });
+    } else {
+      // 为开发环境修改配置
+      config.mode = 'development';
+      config.name = defaultSettings.title;
     }
   },
   chainWebpack: config => {
